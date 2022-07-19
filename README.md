@@ -1,7 +1,10 @@
 #origoni 님의 spring blog 를 fork 하여, spring boot 2.7.1 로 버전업 하였습니다. 
-##---------------------------------
-###war 파일 실행시 java -jar 파일명.war 
-##---------------------------------
+```
+war 파일 실행시 java -jar 파일명.war 
+```
+
+# >>>>> 이하내용은 fork 된 위치에서의 README >>>>>> 
+
 
 # SpringBlog from Millky
 ### SpringBoot 2 base Open-source Blog
