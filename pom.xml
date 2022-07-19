@@ -6,7 +6,7 @@
     <groupId>com.millky.blog</groupId>
     <artifactId>spring-blog</artifactId>
     <version>0.0.22-SNAPSHOT</version>
-    <packaging>jar</packaging> <!--jar 생성시 jar로 war 생성시 war 변경 -->
+    <packaging>war</packaging> <!--jar 생성시 jar로 war 생성시 war 변경 -->
 
     <name>SpringBlog</name>
     <description>SpringBlog project from Millky</description>
@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.2.RELEASE</version>
+        <version>2.7.1</version>
         <relativePath/>
     </parent>
 
@@ -26,6 +26,17 @@
     </properties>
 
     <dependencies>
+        <!--spring boot가 업데이트 되면서 javax.validation 패키지가 분리된 모양이다 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -161,7 +172,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.2-1004-jdbc41</version>
+            <version>42.2.14</version>
         </dependency>
 
         <dependency>
@@ -192,24 +203,22 @@
 
     <build>
         <plugins>
-            <!--<plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            configuration>
-                <executable>true</executable>
-            </configuration>
-        </plugin>-->
-        <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-                <encoding>UTF-8</encoding>
-                <source>1.8</source>
-                <target>1.8</target>
-            </configuration>
-        </plugin>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
 
         <!-- jar 생성시 아래 plugin set 사용함 -->
-            <plugin>
+        <!--<plugin>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-maven-plugin</artifactId>
             <configuration>
@@ -223,7 +232,7 @@
                     </goals>
                 </execution>
             </executions>
-        </plugin>
+        </plugin>-->
     </plugins>
         <finalName>${project.artifactId}-${project.version}</finalName>
     </build>

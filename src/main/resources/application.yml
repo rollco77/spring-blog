@@ -3,6 +3,8 @@ spring:
         view:
             prefix: /WEB-INF/jsp/
             suffix: .jsp
+        pathmatch:
+            matching-strategy: ant_path_matcher
     jpa:
         generate-ddl: true
         show-sql: true
@@ -19,7 +21,7 @@ spring:
         #url: jdbc:h2:file:./spring-blog
         driver-class-name: org.postgresql.Driver
         url: jdbc:postgresql://132.226.20.56:5432/springblog
-        platform: postgres
+        #platform: postgres
         username: postgres
         password: beintech1234
     jackson:

@@ -1,5 +1,7 @@
 package com.millky.blog.presentation.controller.rest;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,8 +48,8 @@ public class TagRestController {
 	@RequestMapping(value = "/tag-cloud", method = RequestMethod.GET)
 	public List<TagCloud> tagCloud(@ModelAttribute @Valid TagCloudCommand command) {
 
-		Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "updateDate"));
-		Pageable pageable = new PageRequest(0, command.getSize(), sort);
+		List<Sort> sortList = new ArrayList<Sort>((Collection<? extends Sort>) new Sort.Order(Direction.DESC, "updateDate"));
+		Pageable pageable = PageRequest.of(0, command.getSize(), sortList.get(0));
 		return tagRepository.findAll(pageable).getContent().stream().map(TagCloud::new).collect(Collectors.toList());
 	}
 
