@@ -31,7 +31,7 @@ public class PostViewController {
 
 		model.addAttribute("post", postRepository.getPostById(id));
 
-		log.debug("post = {}", postRepository.getPostById(id));
+		//log.debug("post = {}", postRepository.getPostById(id));
 
 		return "post/post";
 	}

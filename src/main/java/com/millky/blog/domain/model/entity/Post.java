@@ -38,7 +38,7 @@ public class Post {
 
 	String subtitle;
 
-	@Lob
+	//@Lob
 	String content;
 
 	Date regDate;
