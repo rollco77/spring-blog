@@ -32,10 +32,21 @@ public class  ServiceTest{
 
 
     @Test
-    public void select() {
+    public void productCrawlTest() {
      //   String content = junitTest2Service.getPostContent();
-        naverProductWebCrawlerService.productSearchCrawl("test");
+        naverProductWebCrawlerService.productSearchCrawl("건어물");
         //log.info("content:{}",content);
        // naverProductWebCrawlerService.productReviewCrawl();
+    }
+
+
+    @Test
+    public void selectProductTest() {
+        naverProductWebCrawlerService.selectProductTest();
+    }
+
+    @Test
+    public void productReviewCrawl(){
+        naverProductWebCrawlerService.productReviewCrawl();
     }
 }

@@ -13,4 +13,5 @@ package com.millky.blog.domain.service;
 public interface WebCrawlerService {
     public void productSearchCrawl(String productName);
     public void productReviewCrawl();
+    public void selectProductTest();
 }
