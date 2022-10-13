@@ -4,6 +4,7 @@ package com.millky.blog;
 
 import com.millky.blog.domain.model.entity.Post;
 
+import com.millky.blog.domain.model.entity.Scraping;
 import com.millky.blog.domain.service.PostSearchService;
 import com.millky.blog.domain.service.WebCrawlerService;
 import com.millky.blog.domain.service.impl.NaverProductWebCrawlerService;
@@ -22,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Slf4j
-public class  ServiceTest{
+public class NaverProductCrawlServiceTest{
 
     @Autowired
     private WebCrawlerService naverProductWebCrawlerService;
@@ -34,7 +35,10 @@ public class  ServiceTest{
     @Test
     public void productCrawlTest() {
      //   String content = junitTest2Service.getPostContent();
-        naverProductWebCrawlerService.productSearchCrawl("건어물");
+        Scraping scraping = new Scraping();
+        scraping.setKeyword("다이아 반지");
+        scraping.setChannel("NV");
+        naverProductWebCrawlerService.scraping(scraping);
         //log.info("content:{}",content);
        // naverProductWebCrawlerService.productReviewCrawl();
     }
@@ -47,6 +51,9 @@ public class  ServiceTest{
 
     @Test
     public void productReviewCrawl(){
-        naverProductWebCrawlerService.productReviewCrawl();
+        naverProductWebCrawlerService.productReviewCrawl(null);
     }
+
+
+
 }

@@ -54,3 +54,16 @@ server:
     error:
         whitelabel:
             enabled: false
+    os:
+        type: linux
+        chromedriver :
+#            path : /home/tomcat/chromedriver
+            path : /Users/suhwan/work/pythonwork/chromedriver
+#        type: macos
+#        chromedriver :
+
+crawler:
+    naver:
+        domains :
+            smartStore : smartstore.naver.com
+            searchShopping: search.shopping.naver.com

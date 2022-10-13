@@ -8,11 +8,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public interface ProductDao extends JpaRepository<Product, Integer> {
 
 	public Product findById(int id);
 
 	public List<Product> findAllByRegDateBetween(Date startDate , Date endDate);
+
+	public List<Product> findAllByScrapingId(UUID scrapingId);
 
 }
