@@ -7,8 +7,10 @@ import com.millky.blog.infrastructure.dao.ProductDao;
 import com.millky.blog.infrastructure.dao.ProductReviewDao;
 import com.millky.blog.infrastructure.dao.ScrapingDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,6 +49,13 @@ public class ScrapingRepository {
         return resultProduct;
     }
 
+    public Product saveProduct( Product product) {
+        product.setModDate(new Date());
+        Product resultProduct = productDao.save(product);
+        return resultProduct;
+    }
+
+
     public ProductReview findPrductReviewById(int id){
         return productReviewDao.findById(id);
     }
@@ -56,13 +65,22 @@ public class ScrapingRepository {
         return resultProductReview;
     }
 
-    public Scraping findScrapingById(int id){
+    public Scraping findScrapingById(UUID id){
         return scrapingDao.findById(id);
     }
 
     public Scraping createScraping( Scraping scraping) {
         Scraping resultScraping = scrapingDao.save(scraping);
         return resultScraping;
+    }
+    public Scraping saveScraping( Scraping scraping) {
+        scraping.setModifiedAt(new Date());
+        Scraping resultScraping = scrapingDao.save(scraping);
+        return resultScraping;
+    }
+
+    public List<Scraping> findScrapingAll(){
+        return scrapingDao.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
     }
 
 

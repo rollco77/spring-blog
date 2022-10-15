@@ -16,6 +16,10 @@ public class UserSessionInterceptor extends HandlerInterceptorAdapter {
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+        String uri = request.getRequestURI();
+        if(uri.indexOf("/scraping") > -1){
+            return true;
+        }
         try {
             SecurityContext context = SecurityContextHolder.getContext();
             Authentication authentication = context.getAuthentication();

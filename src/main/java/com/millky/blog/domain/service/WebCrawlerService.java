@@ -3,6 +3,9 @@ package com.millky.blog.domain.service;
 import com.millky.blog.domain.model.entity.Product;
 import com.millky.blog.domain.model.entity.Scraping;
 
+import java.util.List;
+import java.util.UUID;
+
 /**
  * packageName  : com.millky.blog.domain.service.impl
  * fileName     : WebCrawlerService
@@ -18,4 +21,8 @@ public interface WebCrawlerService {
     public void productReviewCrawl(Product product);
     public void selectProductTest();
     public void scraping(Scraping scraping);
+    public Scraping findScraping(UUID scrapingId);
+    public List<Scraping> findScrapingAll ();
+    public Scraping insertScraping(Scraping scraping);
+    public List<Product> findAllByScrapingId(UUID scrapingId);
 }

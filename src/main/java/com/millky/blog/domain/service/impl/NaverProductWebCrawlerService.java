@@ -72,6 +72,29 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
     @Value("${crawler.naver.domains.searchShopping}")
     private String DOMAIN_SEARCHSHOPPING;
 
+
+
+    public List<Scraping> findScrapingAll(){
+        return scrapingRepository.findScrapingAll();
+    }
+
+    public Scraping insertScraping(Scraping scraping){
+        if(scraping.getCreatedAt() == null){
+            scraping.setCreatedAt(new Date());
+        }
+        return scrapingRepository.createScraping(scraping);
+    }
+
+    public List<Product> findAllByScrapingId(UUID scrapingId){
+        return scrapingRepository.findProductAllByScrapingId(scrapingId);
+    }
+
+    public Scraping findScraping(UUID scrapingId){
+        return scrapingRepository.findScrapingById(scrapingId);
+    }
+
+    //public List<ProductReview>
+
     /**
      * 상품검색 후 상품정보 등록
      * @param  scraping 수집정보
@@ -79,7 +102,14 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
 
     @Override
     public void scraping(Scraping scraping){
-        scraping = scrapingRepository.createScraping(scraping);
+
+        if(scraping == null){
+            scraping.setStatus("1");
+            scraping = scrapingRepository.createScraping(scraping);
+        }else{
+            scraping.setStatus("1");
+            scraping = scrapingRepository.saveScraping(scraping);
+        }
 
         UUID scrapingId = scraping.getId();
         productSearchCrawl(scraping);
@@ -88,6 +118,8 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
 
         for(Product product : productList){
             productReviewCrawl(product);
+            product.setCollectCommentYn("Y");
+            scrapingRepository.saveProduct(product);
         }
     }
 
@@ -118,7 +150,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         webDriver.get(webDriver.getCurrentUrl());
         try {
            // wait.wait(2000);
-            Thread.sleep(1000);
+            Thread.sleep(2000);
             JavascriptExecutor js = webDriver;
             //웹 페이지를 끝까지 스크롤합니다. //selenium scroll controll 참조 pate https://www.guru99.com/scroll-up-down-selenium-webdriver.html#2
             js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
@@ -132,7 +164,12 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         //List<WebElement> itemListDivs  = webDriver.findElements(By.xpath("/html/body/div/div/div[2]/div[3]/div/ul/div/div/"));
         //WebElement itemListDiv  = webDriver.findElement(By.xpath("/html/body/div/div/div[2]/div[2]/div[3]/div/ul/div/div"));
 
-        WebElement itemListDiv  = webDriver.findElement(By.xpath("/html/body/div/div/div[2]/div[2]/div[3]/div/ul/div"));
+        WebElement itemListDiv  = null;
+        try{
+            itemListDiv  = webDriver.findElement(By.xpath("/html/body/div/div/div[2]/div[2]/div[3]/div/ul/div"));
+        }catch(Exception e){
+            itemListDiv  = webDriver.findElement(By.xpath("/html/body/div/div/div[2]/div/div[3]/div/ul/div"));
+        }
 
         List<WebElement> itemListDivs  = itemListDiv.findElements(By.xpath("./div"));
 
@@ -169,7 +206,6 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
                 if("광고".equals(advertisementText)){
                     loopCount--;
                     continue;
-
                 }
             }else{
                 advertisementText    = "";
@@ -181,7 +217,6 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
 
             productMallElement = divElementObj.findElement(By.cssSelector("a[class^='basicList_mall']"));
             String mallName    = productMallElement.getText();
-
 
             //log.info("[title:{}] href:{}", title, href);
             //openDetailProductPage(href);
@@ -197,7 +232,6 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
             product.setHref(href);
             product.setSearchKeyword(scraping.getKeyword());
             product.setMallName(mallName);
-
 
             productRepository.createProduct(product);
         }

@@ -6,10 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public interface ScrapingDao extends JpaRepository<Scraping, Integer> {
 
-	public Scraping findById(int id);
-
+	public Scraping findById(UUID id);
 
 }

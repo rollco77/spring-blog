@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * packageName  : com.millky.blog.domain.repository
@@ -27,6 +28,10 @@ public class ProductRepository {
 
     public Product findPrductById(int id){
         return productDao.findById(id);
+    }
+
+    public List<Product> findAllByScrapingId(UUID scrpaingId){
+        return productDao.findAllByScrapingId(scrpaingId);
     }
 
     public List<Product> findAllProductByDate(String yyyyMMddDate){

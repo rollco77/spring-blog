@@ -7,6 +7,7 @@ import com.millky.blog.domain.service.WebCrawlerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -42,7 +43,6 @@ public class WebCrawlerController {
         return productName;
     }
 
-
     @RequestMapping(value = "/crawler/crawlTest/{keyword}", method = RequestMethod.GET)
     public String crawlTest( @PathVariable String keyword) {
 
@@ -50,6 +50,7 @@ public class WebCrawlerController {
 
         scraping.setKeyword(keyword);
         scraping.setChannel("NV");
+        scraping.setCreatedAt(new Date());
 
         webCrawlerService.scraping(scraping);
 
