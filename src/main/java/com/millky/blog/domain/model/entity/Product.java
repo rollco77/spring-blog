@@ -2,6 +2,7 @@ package com.millky.blog.domain.model.entity;
 
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Formula;
 
 
 import javax.persistence.*;
@@ -66,4 +67,7 @@ public class Product {
     @org.hibernate.annotations.Comment("수정 일자")
     private Date modDate;
 
+    //댓글 개수
+    @Formula("(SELECT count(1) FROM t_product_review r WHERE r.product_id = id)")
+    private int reviewCount;
 }

@@ -93,10 +93,11 @@
 								<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
 									<thead>
 										<tr>
-											<th style="text-align: center;width: 50%;">상품 제목</th>
+											<th style="text-align: center;width: 48%;">상품 제목</th>
 											<th style="text-align: center;width: 7%;">리뷰 수집여부</th>
 											<th style="text-align: center;width: 20%;">상품몰 명</th>
 											<th style="text-align: center;width: 10%;">등록일시</th>
+											<th style="text-align: center;width: 7%;">리뷰개수</th>
 											<th style="text-align: center;width: 8%;">리뷰목록</th>
 										</tr>
 									</thead>
@@ -109,6 +110,7 @@
 											<td>${result.collectCommentYn}</td>
 											<td><c:out value="${result.mallName}"></c:out></td>
 											<td><c:out value="${result.regDate}"></c:out></td>
+											<td><c:out value="${result.reviewCount}"></c:out></td>
 											<td><button type="button" class="btn-sm btn-success" onclick="go_productReviewList('<c:out value="${result.id}"></c:out>')">
 											리뷰 목록 >> </button></td>
 										</tr>

@@ -93,7 +93,6 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         return scrapingRepository.findScrapingById(scrapingId);
     }
 
-
     public Product findByProductId(int product){
         return scrapingRepository.findPrductById(product);
     }
@@ -192,6 +191,8 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
 
         int loopCount = 0;
 
+        //TODO 수집상태 수집중으로 변경
+
         for( WebElement divElementObj : itemListDivs){
 
             if(loopCount >= 5){
@@ -209,7 +210,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
                 advertisementElement = null;
             }
 
-            //광고 항목 제
+            //광고 항목 제외
             if(advertisementElement != null){
                 advertisementText    = advertisementElement.getText();
                 if("광고".equals(advertisementText)){
@@ -245,22 +246,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
             productRepository.createProduct(product);
         }
 
-        //WebDriverWait wait = new WebDriverWait(webDriver, duration);
-        //wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("")));
-
-        //Duration duration = Duration.ofSeconds(10);
-
-
-        //WebElement searchBar = webDriver.findElement(By.cssSelector("#lst-ib"));
-        //searchBar.sendKeys("어쩌다, 블로그");
-        //webDriver.findElement(By.cssSelector("#_fZl")).click();
-
-        //ExpectedConditions.elementToBeClickable(By.linkText("어쩌다, 블로그"));
-
-        //WebElement bkim = new WebDriverWait(webDriver, duration).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("")));
-
-
-       // bkim.click();
+        //TODO 수집상태 수집완료 변경
         webDriver.close();
     }
 
@@ -280,13 +266,12 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
     public void productReviewCrawl(Product product) {
 
         //TODO 앞단에 검색이력에 대한 정보가 저장되도록
-        //productRepository.
 
         //서치 쇼핑 URL
         //String url   = "https://search.shopping.naver.com/catalog/32152670618?query=%EA%B3%B5%EA%B8%B0%EC%B2%AD%EC%A0%95%EA%B8%B0&NaPm=ct%3Dl8jknjpk%7Cci%3Dc20da9d24cfd7d47067b9db861acdd14fce8db2a%7Ctr%3Dslsl%7Csn%3D95694%7Chk%3Dc312841b1544d91d4cdf3d8d19e32140f9a2bad4";
-
         //String url   = "https://cr.shopping.naver.com/adcr.nhn?x=7%2FN60T2lxfrHawBMZ90AYP%2F%2F%2Fw%3D%3Ds3%2BxWW3%2Bj%2Bdgd4bC5qNiVHGCsorQ7x2%2B8tkORlvjTdKDFxQiyQ%2FPFeUL97yMCGfG7nuull1%2B1x9V%2F0p%2BuY0OLkwSA8HCr4MSB%2FURcT9VAIGuL0XJ34TOqXEsGz8kXquvs%2FtrBhWzYG3FlqSdwzGz%2BLcVIhUTYq2J1wF4XcKD2AOWkOA3ZateG%2FY8eKxwX1E0N0rQVpjzFjttKAPSkE8U%2BtvEdxMdOjRR1lZi2kumcQlDDpmNu2Rs3tEPrV0ZTODsbWqyaFa2xLbpwGCJChqMDqtD4tGLrW%2BUNDaKa5zDakzB82YCvgtr9uNup2jUFEnSQAnR8gCU54B27Ld%2FqqHOQ%2Fa%2FolaQPBZQns9jZyLdVtKnN81WjUpxJVJrN5mDsz4BpYAO1nU7jT0xrjFl0%2FNjQVPtIkS4T%2FVw8AbiW%2FTyHDG9BtL4UAwqOsxBRv4v%2By8CMqEiJF5dFsR2scXYC2L2WQg5liopvlwijAjj8FFsM52N3g16uxkF3yw%2FGzN8xnTrryYfnizfLq0JvB6MdT4R7WF6oUanMv0xSPL6hompqcX%2BDrgClekVxtSLNN1yS74gXYL0ggK6cuZJ0zjDQVM2kbdjrfQftpvuMaoHKbM2cTuvnyZbESFyGznsV%2Bm1uUJGraGimR4pR27mrh1IoDTOSgA%3D%3D&nvMid=11314490965&catId=50004739";
         //String url   = "https://search.shopping.naver.com/catalog/21812315770?adId=nad-a001-02-000000164970440&channel=nshop.npla&query=%EA%B3%B5%EA%B8%B0%EC%B2%AD%EC%A0%95%EA%B8%B0&NaPm=ct%3Dl842isz4%7Cci%3D0HrQ0e0s42fxSb2owflr%7Ctr%3Dpla%7Chk%3Dbe841d6f305f33fdf741ec779883f44b8e08060d&cid=0HrQ0e0s42fxSb2owflr";
+
         String url = "https://search.shopping.naver.com/catalog/31692999942?query=%EC%95%84%EC%9B%83%EB%8F%84%EC%96%B4&NaPm=ct%3Dl96bi5nc%7Cci%3D902a07df3ec7af19f3761ee39b516b8c8d8016f0%7Ctr%3Dslsl%7Csn%3D95694%7Chk%3D968692b583e356bde9eff72f4e99ba560e197614";
 
         if(product != null){
@@ -336,6 +321,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         product.setStoreType(domain);
         product.setTitle(product.getTitle());
         product.setRegDate(new Date());
+
 
         try{
 

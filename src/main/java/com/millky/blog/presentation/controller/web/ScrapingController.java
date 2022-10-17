@@ -102,7 +102,9 @@ public class ScrapingController {
 
         Product product = webCrawlerService.findByProductId(int_productId);
         List<ProductReview> productReviewlist =  webCrawlerService.findProductReviewAllByProductId(int_productId);
+        Scraping scraping = webCrawlerService.findScraping(product.getScrapingId());
 
+        model.addAttribute("scraping", scraping);
         model.addAttribute("product", product);
         model.addAttribute("productReviewList", productReviewlist);
         return "scraping/productReviewList";

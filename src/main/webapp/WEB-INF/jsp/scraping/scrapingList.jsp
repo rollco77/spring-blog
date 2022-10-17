@@ -158,6 +158,9 @@
 					<input id="scrapingStatus" class="form-control" type="text" placeholder="" aria-label="" disabled>
 				</div>
 				<div>
+					* 현재 키워드당 상품몰은 광고를 제외한 상위 5개 업체의 리뷰수집을 하고 있습니다.
+				</div>
+				<div>
 					ID <input id="scrapingId" class="form-control disabled" type="text" placeholder="" aria-label="" disabled>
 				</div>
 				<div class="mb-3" id="success_text">
