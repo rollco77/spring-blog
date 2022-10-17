@@ -60,6 +60,10 @@ public class ScrapingRepository {
         return productReviewDao.findById(id);
     }
 
+    public List<ProductReview> findProductReviewAllByProductId(int productId){
+        return productReviewDao.findAllByProductId(productId);
+    }
+
     public ProductReview createProductReview( ProductReview productReview) {
         ProductReview resultProductReview = productReviewDao.save(productReview);
         return resultProductReview;
@@ -82,6 +86,7 @@ public class ScrapingRepository {
     public List<Scraping> findScrapingAll(){
         return scrapingDao.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
     }
+
 
 
 }

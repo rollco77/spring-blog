@@ -93,6 +93,15 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         return scrapingRepository.findScrapingById(scrapingId);
     }
 
+
+    public Product findProduct(int product){
+        return scrapingRepository.findPrductById(product);
+    }
+
+    public List<ProductReview> findProductReviewAllByProductId(int product){
+        return scrapingRepository.findProductReviewAllByProductId(product);
+    }
+
     //public List<ProductReview>
 
     /**
@@ -325,7 +334,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         //TODO test용 Product . DB에서 상품정보 조회하여 저장하도록 수정
 
         product.setStoreType(domain);
-        product.setTitle("test");
+        product.setTitle(product.getTitle());
         product.setRegDate(new Date());
 
         try{

@@ -13,6 +13,6 @@ public interface ProductReviewDao extends JpaRepository<ProductReview, Integer> 
 
 	public List<ProductReview> findAllByProductId(int productId);
 
-	//public List<Product> findAllByRegDateBetween(Date startDate , Date endDate);
+	//public List<ProductReview> findAllByProductId(Date startDate , Date endDate);
 
 }

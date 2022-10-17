@@ -50,7 +50,7 @@
 
 				<!-- Page Heading -->
 				<div class="d-sm-flex align-items-center justify-content-between mb-4">
-					<h1 class="h3 mb-0 text-gray-800">스크래핑 작업목록</h1>
+					<h1 class="h3 mb-0 text-gray-800">리뷰목록 조회</h1>
 				</div>
 
 
@@ -59,7 +59,7 @@
 					<p class="mb-4"></p>
 						<div style="height: 30px;">
 							<div style="float:left;width:40%;">
-								<h6 class="m-0 font-weight-bold text-primary">상품 목록</h6>
+								<h6 class="m-0 font-weight-bold text-primary">리뷰 목록</h6>
 							</div>
 		<%--					<div class="d-flex justify-content-end" style="float:left;vertical-align: middle;width:60%;">
 								<a href="#" id="myModal" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
@@ -71,24 +71,19 @@
 								<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
 									<thead>
 										<tr>
-											<th style="text-align: center">상품 제목</th>
-											<th style="text-align: center">리뷰 수집여부</th>
-											<th style="text-align: center">상품몰 명</th>
-											<th style="text-align: center">등록일시</th>
-											<th style="text-align: center">리뷰목록</th>
+											<th style="text-align: center">리뷰 내용</th>
+											<th style="text-align: center">리뷰 평점</th>
+											<th style="text-align: center">상품요약정보</th>
 										</tr>
 									</thead>
 									<tfoot>
 									</tfoot>
 									<tbody>
-									<c:forEach var="result" items="${productList}" varStatus="status">
+									<c:forEach var="result" items="${productReviewList}" varStatus="status">
 										<tr>
-											<td>${result.title}</td>
-											<td>${result.collectCommentYn}</td>
-											<td><c:out value="${result.mallName}"></c:out></td>
-											<td><c:out value="${result.regDate}"></c:out></td>
-											<td><button type="button" class="btn-sm btn-success" onclick="go_productReviewList('<c:out value="${result.id}"></c:out>')">
-											리뷰 목록 >> </button></td>
+											<td>${result.content}</td>
+											<td>${result.averagePoint}</td>
+											<td><c:out value="${result.contentSummary}"></c:out></td>
 										</tr>
 									</c:forEach>
 									</tbody>
@@ -208,8 +203,33 @@
 		$('#scrapingId').val(scrapingId);
 	}
 
-	function go_productReviewList(productId){
-		location.href="${pageContext.request.contextPath}/scraping/review/list/"+productId;
+	function insertScraping(){
+		$.ajax({
+			url: "${pageContext.request.contextPath}/scraping/scrap/insert", // 클라이언트가 HTTP 요청을 보낼 서버의 URL 주소
+			data: { keyword: $("#keyword").val() , channel: $("#scrapingChannel").val() },  // HTTP 요청과 함께 서버로 보낼 데이터
+			//method: "POST",   // HTTP 요청 메소드(GET, POST 등)
+			dataType: "json" // 서버에서 보내줄 데이터의 타입
+		})
+		// HTTP 요청이 성공하면 요청한 데이터가 done() 메소드로 전달됨.
+		.done(function(json) {
+			$("#success_text").html("등록되었습니다.");
+			//$("<h1>").text(json.title).appendTo("body");
+			//$("<div class=\"content\">").html(json.html).appendTo("body");
+		})
+		// HTTP 요청이 실패하면 오류와 상태에 관한 정보가 fail() 메소드로 전달됨.
+		.fail(function(xhr, status, errorThrown) {
+			$("#result_text").html("오류가 발생했다.<br>")
+					.append("오류명: " + errorThrown + "<br>")
+					.append("상태: " + status);
+		})
+		//
+		.always(function(xhr, status) {
+			$("#result_text").html("요청이 완료되었습니다!");
+		});
+	}
+
+	function go_productList(scrapingId){
+		location.href="${pageContext.request.contextPath}/scraping/product/list/"+scrapingId;
  	}
 </script>
 <!-- Page level custom scripts -->

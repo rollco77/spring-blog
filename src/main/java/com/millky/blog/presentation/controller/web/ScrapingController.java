@@ -1,8 +1,10 @@
 package com.millky.blog.presentation.controller.web;
 
 import com.millky.blog.domain.model.entity.Product;
+import com.millky.blog.domain.model.entity.ProductReview;
 import com.millky.blog.domain.model.entity.Scraping;
 import com.millky.blog.domain.service.WebCrawlerService;
+import com.rollco7.util.NumberUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -88,6 +90,17 @@ public class ScrapingController {
         model.addAttribute("productList", productlist);
 
         return "scraping/productList";
+    }
+
+
+
+    @RequestMapping( value="/review/list/{productId}" , method = RequestMethod.GET)
+    public String reviewList(Model model,@PathVariable String productId) {
+
+        int int_productId = NumberUtil.getOlnyInt(productId);
+        List<ProductReview> productReviewlist =  webCrawlerService.findProductReviewAllByProductId(int_productId);
+        model.addAttribute("productReviewList", productReviewlist);
+        return "scraping/productReviewList";
     }
 
 

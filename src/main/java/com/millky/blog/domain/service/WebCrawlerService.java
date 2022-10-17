@@ -1,6 +1,7 @@
 package com.millky.blog.domain.service;
 
 import com.millky.blog.domain.model.entity.Product;
+import com.millky.blog.domain.model.entity.ProductReview;
 import com.millky.blog.domain.model.entity.Scraping;
 
 import java.util.List;
@@ -25,4 +26,7 @@ public interface WebCrawlerService {
     public List<Scraping> findScrapingAll ();
     public Scraping insertScraping(Scraping scraping);
     public List<Product> findAllByScrapingId(UUID scrapingId);
+    public List<ProductReview> findProductReviewAllByProductId(int productId);
+
+
 }
