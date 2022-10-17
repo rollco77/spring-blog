@@ -94,7 +94,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
     }
 
 
-    public Product findProduct(int product){
+    public Product findByProductId(int product){
         return scrapingRepository.findPrductById(product);
     }
 
@@ -354,7 +354,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
                     //WebElement topicElement = webElement.findElement(By.cssSelector("a"));
 
                     //TODO search , smartstore 구분하여 처리
-                    getSearchStoreReview(webDriver , webElement , product);
+                    getSearchStoreReview(webDriver , webElement , product );
                     log.debug(topicName);
                 }
             }else if(DOMAIN_SMARTSTORE.equals(domain)){
@@ -427,7 +427,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
                 if(pageCount == 1 ){
 
                     //getReviewForPage(webDriver, product, pageNum);
-                    getReviewForPageWithSmartStore(webDriver,product,pageNum);
+                    getReviewForPageWithSmartStore(webDriver,product,pageNum ,topicName);
                 }else{ //1페이지가 아닌 경우 다음 버튼을 클릭하여 페이지 이동
                     boolean isStop = false;
 
@@ -451,7 +451,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
                                     pageButtonEl.click();
                                     sleep(2);
                                     log.warn("pageButtonEl.isDisplayed():"+ pageButtonEl.isDisplayed());
-                                    getReviewForPageWithSmartStore(webDriver,product,pageNum);
+                                    getReviewForPageWithSmartStore(webDriver,product,pageNum,topicName);
                                 }else{
                                     log.warn("pageButtonEl.isDisplayed():"+ pageButtonEl.isDisplayed());
                                     log.warn("pageButtonEl.isEnabled():"+ pageButtonEl.isDisplayed());
@@ -515,16 +515,16 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
                     buttonElement.click();
                 }
                 sleep(1);
-                getReviewForPage(webDriver, product, pageNum);
+                getReviewForPage(webDriver, product, pageNum , topicName);
             }
         }else{ //리뷰 페이징이 없는 경우
             sleep(2);
-            getReviewForPage(webDriver, product, "1");
+            getReviewForPage(webDriver, product, "1" ,topicName);
         }
         //WebElement sectionReview = section_review
     }
 
-    private void getReviewForPage(WebDriver webDriver, Product product, String pageNum) {
+    private void getReviewForPage(WebDriver webDriver, Product product, String pageNum ,String topicName) {
         WebElement reDrawReviewDivision  = webDriver.findElement(By.cssSelector("div[id=section_review]"));
         List<WebElement> reviewLis       = reDrawReviewDivision.findElements(By.cssSelector("ul[class^=reviewItems_list_review] li"));
         log.info("[ pageNum ] : {} ,  " , pageNum);
@@ -557,9 +557,11 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
                     productReview.setProduct(product);
                     productReview.setProductId(product.getId());
                 }
+                productReview.setTopic(topicName);
                 productReview.setAveragePoint(averagePoint);
                 productReview.setContent(reviewContent);
                 productReview.setRegDate(new Date());
+
                 scrapingRepository.createProductReview(productReview);
                 if(moreLog) log.debug("[ get review step end ]");
             }catch(Exception ex){
@@ -574,7 +576,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         }
     }
 
-    private void getReviewForPageWithSmartStore(WebDriver webDriver, Product product, String pageNum){
+    private void getReviewForPageWithSmartStore(WebDriver webDriver, Product product, String pageNum, String topicName){
         WebElement reDrawReviewDivision  = webDriver.findElement(By.cssSelector("div[id=REVIEW] > div > div:nth-of-type(3) > div:nth-of-type(2) > ul"));
         List<WebElement> reviewLis       = reDrawReviewDivision.findElements(By.cssSelector("li"));
 
@@ -595,6 +597,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
                 }
 
                 int average = NumberUtil.getOlnyInt(averageDiv.getText());
+                productReview.setTopic(topicName);
                 productReview.setAveragePoint(average);
                 productReview.setContent(contentDiv.getText());
                 productReview.setRegDate(new Date());

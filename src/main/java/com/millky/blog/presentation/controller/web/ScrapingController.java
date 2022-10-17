@@ -87,18 +87,23 @@ public class ScrapingController {
 
         UUID uuid = UUID.fromString(scrapingId);
             List<Product> productlist =  webCrawlerService.findAllByScrapingId(uuid);
+        Scraping scraping = webCrawlerService.findScraping(uuid);
+
+        model.addAttribute("scraping", scraping);
         model.addAttribute("productList", productlist);
 
         return "scraping/productList";
     }
 
-
-
     @RequestMapping( value="/review/list/{productId}" , method = RequestMethod.GET)
     public String reviewList(Model model,@PathVariable String productId) {
 
         int int_productId = NumberUtil.getOlnyInt(productId);
+
+        Product product = webCrawlerService.findByProductId(int_productId);
         List<ProductReview> productReviewlist =  webCrawlerService.findProductReviewAllByProductId(int_productId);
+
+        model.addAttribute("product", product);
         model.addAttribute("productReviewList", productReviewlist);
         return "scraping/productReviewList";
     }

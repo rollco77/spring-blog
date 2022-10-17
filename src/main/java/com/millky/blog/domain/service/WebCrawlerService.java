@@ -25,6 +25,8 @@ public interface WebCrawlerService {
     public Scraping findScraping(UUID scrapingId);
     public List<Scraping> findScrapingAll ();
     public Scraping insertScraping(Scraping scraping);
+
+    public Product findByProductId(int productId);
     public List<Product> findAllByScrapingId(UUID scrapingId);
     public List<ProductReview> findProductReviewAllByProductId(int productId);
 

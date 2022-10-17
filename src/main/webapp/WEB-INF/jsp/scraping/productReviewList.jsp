@@ -71,9 +71,10 @@
 								<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
 									<thead>
 										<tr>
-											<th style="text-align: center">리뷰 내용</th>
-											<th style="text-align: center">리뷰 평점</th>
-											<th style="text-align: center">상품요약정보</th>
+											<th style="text-align: center;width: 10%;">리뷰 주제</th>
+											<th style="text-align: center;width: 40%;">리뷰 내용</th>
+											<th style="text-align: center;width: 10%;">리뷰 평점</th>
+											<th style="text-align: center;width: 40%;">상품요약정보</th>
 										</tr>
 									</thead>
 									<tfoot>
@@ -81,6 +82,7 @@
 									<tbody>
 									<c:forEach var="result" items="${productReviewList}" varStatus="status">
 										<tr>
+											<td>${result.topic}</td>
 											<td>${result.content}</td>
 											<td>${result.averagePoint}</td>
 											<td><c:out value="${result.contentSummary}"></c:out></td>

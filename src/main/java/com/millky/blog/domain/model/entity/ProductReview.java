@@ -35,6 +35,10 @@ public class ProductReview {
 
     private int productId;
 
+    @org.hibernate.annotations.Comment("리뷰 주제")
+    @Column(length=50)
+    private String topic;
+
     @org.hibernate.annotations.Comment("평점")
     private int averagePoint;
 
