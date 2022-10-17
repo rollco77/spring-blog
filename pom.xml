@@ -24,6 +24,7 @@
         <start-class>com.millky.blog.Booter</start-class>
         <java.version>1.11</java.version>
         <m2eclipse.wtp.contextRoot>/</m2eclipse.wtp.contextRoot>
+        <maven.test.skip>true</maven.test.skip>
     </properties>
 
     <dependencies>
