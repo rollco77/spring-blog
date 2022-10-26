@@ -1,5 +1,6 @@
 package com.millky.blog.presentation.controller.rest;
 
+import com.millky.blog.domain.constant.scraping.Channel;
 import com.millky.blog.domain.model.entity.Comment;
 import com.millky.blog.domain.model.entity.Scraping;
 import com.millky.blog.domain.repository.ProductRepository;
@@ -49,7 +50,7 @@ public class WebCrawlerController {
         Scraping scraping = new Scraping();
 
         scraping.setKeyword(keyword);
-        scraping.setChannel("NV");
+        scraping.setChannel(Channel.valueOf("NV"));
         scraping.setCreatedAt(new Date());
 
         webCrawlerService.scraping(scraping);

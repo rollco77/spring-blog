@@ -94,7 +94,7 @@
    											    </c:choose>
     										</td>
 											<td><a onclick="javascript:openDetail('<c:out value="${result.id}"></c:out>','<c:out value="${result.channel}"></c:out>','<c:out value="${result.keyword}"></c:out>','<c:out value="${result.status}"></c:out>')" href="#"><c:out value="${result.keyword}"></c:out></a></td>
-											<td><c:out value="${result.status}"></c:out></td>
+											<td><c:out value="${result.status.description}"></c:out></td>
 											<td><c:out value="${result.noc}"></c:out></td>
 											<td><button type="button" class="btn-sm btn-success" onclick="go_productList('<c:out value="${result.id}"></c:out>')">
 												상품목록 >>
@@ -200,7 +200,16 @@
 
 <!-- Page level plugins -->
 <script src="${pageContext.request.contextPath}/statics/vendor/chart.js/Chart.min.js"></script>
+
+<!-- Page level plugins -->
+<script src="${pageContext.request.contextPath}/statics/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="${pageContext.request.contextPath}/statics/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
 <script >
+
+	$(document).ready(function() {
+		$('#dataTable').DataTable();
+	});
 
 	$(function(){
 		$("#btn-scraping-new").click(function(){
@@ -262,7 +271,7 @@
 	//수집단계 0:미시작 1:수집요청 2:수집중 3:수집완료 4:
 	function startCraping(){
 		var scrapingStatus = $('#scrapingStatus').val();
-		if(scrapingStatus != "" && scrapingStatus != "0"){
+		if(scrapingStatus != "" && scrapingStatus != "P0"){
 			alert("이미 수집완료 되었거나 수집중 상태입니다.");
 			return;
 		}

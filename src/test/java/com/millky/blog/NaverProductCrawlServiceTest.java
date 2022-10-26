@@ -2,6 +2,7 @@ package com.millky.blog;
 
 
 
+import com.millky.blog.domain.constant.scraping.Channel;
 import com.millky.blog.domain.model.entity.Post;
 
 import com.millky.blog.domain.model.entity.Scraping;
@@ -37,7 +38,7 @@ public class NaverProductCrawlServiceTest{
      //   String content = junitTest2Service.getPostContent();
         Scraping scraping = new Scraping();
         scraping.setKeyword("다이아 반지");
-        scraping.setChannel("NV");
+        scraping.setChannel(Channel.valueOf("NV"));
         naverProductWebCrawlerService.scraping(scraping);
         //log.info("content:{}",content);
        // naverProductWebCrawlerService.productReviewCrawl();

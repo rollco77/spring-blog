@@ -78,7 +78,7 @@
 													<div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
 														스크래핑 정보</div>
 													<div class="h5 mb-0 font-weight-bold text-gray-800">
-														채널: ${scraping.channel} <br>
+														채널: ${scraping.channel.value} <br>
 														키워드: ${scraping.keyword} <br>
 													</div>
 												</div>
@@ -225,8 +225,17 @@
 <script src="${pageContext.request.contextPath}/statics/js/sb-admin-2.min.js"></script>
 
 <!-- Page level plugins -->
+<script src="${pageContext.request.contextPath}/statics/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="${pageContext.request.contextPath}/statics/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+
+	<!-- Page level plugins -->
 <script src="${pageContext.request.contextPath}/statics/vendor/chart.js/Chart.min.js"></script>
 <script >
+
+	$(document).ready(function() {
+		$('#dataTable').DataTable();
+	});
 
 	$(function(){
 		$("#btn-scraping-new").click(function(){

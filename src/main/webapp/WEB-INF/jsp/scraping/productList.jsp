@@ -77,7 +77,7 @@
 													<div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
 														스크래핑 정보</div>
 													<div class="h5 mb-0 font-weight-bold text-gray-800">
-														채널: ${scraping.channel} <br>
+														채널: ${scraping.channel.value} <br>
 														키워드: ${scraping.keyword} <br>
 													</div>
 												</div>

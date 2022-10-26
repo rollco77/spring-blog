@@ -1,5 +1,6 @@
 package com.millky.blog.domain.model.entity;
 
+import com.millky.blog.domain.constant.scraping.ScrapingStatus;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
@@ -31,9 +32,15 @@ public class Scraping {
     //@Column(columnDefinition = "BINARY(16)")
     private UUID id;
 
+    //@org.hibernate.annotations.Comment("채널")
+    //@Column(columnDefinition = "VARCHAR(2)")
+    //private String channel;
+
+    @Enumerated(EnumType.STRING)
     @org.hibernate.annotations.Comment("채널")
     @Column(columnDefinition = "VARCHAR(2)")
-    private String channel;
+    private com.millky.blog.domain.constant.scraping.Channel channel;
+
 
     @org.hibernate.annotations.Comment("스크래핑 할 업체수")
     //@Column(columnDefinition = "VARCHAR(2)")
@@ -45,7 +52,9 @@ public class Scraping {
 
     @org.hibernate.annotations.Comment("스크래핑 상태")
     @Column(columnDefinition = "VARCHAR(2)")
-    private String status;
+    //@Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
+    private ScrapingStatus status;
 
     @org.hibernate.annotations.Comment("배치 시작일")
     //@Column(columnDefinition = "VARCHAR(2)")
