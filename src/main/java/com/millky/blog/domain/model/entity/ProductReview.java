@@ -46,9 +46,16 @@ public class ProductReview {
     @org.hibernate.annotations.Comment("댓글 내용")
     private String content;
 
+    @Column(length=1)
+    @org.hibernate.annotations.Comment("재구매 여부")
+    private String repurchaseYn;
+
     @Column(length=1000)
     @org.hibernate.annotations.Comment("댓글 요약")
     private String contentSummary;
+
+    @org.hibernate.annotations.Comment("리뷰 작성 일자")
+    private Date reviewCreateDate;
 
     @org.hibernate.annotations.Comment("작성 일자")
     private Date regDate;

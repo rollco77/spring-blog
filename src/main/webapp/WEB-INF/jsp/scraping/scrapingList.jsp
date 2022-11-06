@@ -12,7 +12,7 @@
 	<meta name="description" content="">
 	<meta name="author" content="">
 
-	<title>SB Admin 2 - Dashboard 2</title>
+	<title>SB Admin 2 - Dashboard</title>
 
 	<!-- Custom fonts for this template-->
 	<link href="${pageContext.request.contextPath}/statics/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -271,7 +271,7 @@
 	//수집단계 0:미시작 1:수집요청 2:수집중 3:수집완료 4:
 	function startCraping(){
 		var scrapingStatus = $('#scrapingStatus').val();
-		if(scrapingStatus != "" && scrapingStatus != "P0"){
+		if(scrapingStatus != "" && scrapingStatus != "P1"){
 			alert("이미 수집완료 되었거나 수집중 상태입니다.");
 			return;
 		}

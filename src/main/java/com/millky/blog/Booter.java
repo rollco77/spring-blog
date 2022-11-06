@@ -3,7 +3,10 @@ package com.millky.blog;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.support.ErrorPageFilter;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Bean;
 
 /**
  * 20220804 spring 테스트 : @SpringBootApplication 이 적용된 class 하위 패키지 부터 spring Bean 의 생성이 가능하다.
@@ -24,8 +27,16 @@ public class Booter {
 @SpringBootApplication
 public class Booter extends SpringBootServletInitializer {
 
+
+	public Booter() {
+		super();
+		//setRegisterErrorPageFilter(false); // <- this one
+	}
+
 	public static void main(String[] args) {
+
 		SpringApplication.run(Booter.class, args);
+
 	}
 
 	@Override

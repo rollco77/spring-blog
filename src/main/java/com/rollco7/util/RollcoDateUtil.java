@@ -46,6 +46,11 @@ public class RollcoDateUtil {
 
     public static Date getDateZeroTime(String yyyymmdd ) {
 
+        yyyymmdd = yyyymmdd.replaceAll("[^0-9]","");
+
+        if(yyyymmdd.length() == 6 ){
+            yyyymmdd = "20" + yyyymmdd;
+        }
         try {
 
             final String REGEX = "[0-9]+";

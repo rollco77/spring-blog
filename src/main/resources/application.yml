@@ -33,14 +33,14 @@ spring:
 #            wrap-root-value: true
 
 # https://developers.facebook.com/apps -> 새 앱 추가 -> Facebook 로그인
-spring.security.oauth2.client.registration.facebook.client-id: 487654301400466
-spring.security.oauth2.client.registration.facebook.client-secret: 3ec76bf19fbfeaf187a6673d1cf16411
+spring.security.oauth2.client.registration.facebook.client-id : 487654301400466
+spring.security.oauth2.client.registration.facebook.client-secret : 3ec76bf19fbfeaf187a6673d1cf16411
 
 # https://console.developers.google.com/ -> 사용자 인증 정보 -> 사용자 인증 정보 만들기 -> OAuth 클라이언트 ID
 #spring.security.oauth2.client.registration.google.client-id: 564319405493-ldgbknrojsjh4m3lm187df00n5rt24bs.apps.googleusercontent.com
 #spring.security.oauth2.client.registration.google.client-secret: 6PnvyM2DObCTtL1CKvj_VTwq
-spring.security.oauth2.client.registration.google.client-id: 654537341843-n12bopaohv8ua6nlm90thi4tem6jpasa.apps.googleusercontent.com
-spring.security.oauth2.client.registration.google.client-secret: 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
+spring.security.oauth2.client.registration.google.client-id : 654537341843-n12bopaohv8ua6nlm90thi4tem6jpasa.apps.googleusercontent.com
+spring.security.oauth2.client.registration.google.client-secret : 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
 #spring.security.oauth2.client.registration.google.redirect-uri: https://{baseUrl}/{action}/oauth2/code/{registrationId}
 #spring.security.oauth2.client.registration.google.redirect-uri: https://www.rollco7.com/{action}/oauth2/code/{registrationId}
 
@@ -67,3 +67,23 @@ crawler:
         domains :
             smartStore : smartstore.naver.com
             searchShopping: search.shopping.naver.com
+
+
+# NCloud User Open API
+open.api.access.key : ncloud-access-key
+open.api.secret.key : ncloud-secret-key
+open.api.host : https://ncloud.apigw.ntruss.com
+
+# Object Storage host
+open.api.obj.host : {"kr-standard":"https://kr.object.ncloudstorage.com", "us-standard":"https://us.object.ncloudstorage.com", "sg-standard":"https://sg.object.ncloudstorage.com", "jp-standard":"https://jp.object.ncloudstorage.com", "de-standard":"https://de.object.ncloudstorage.com"}
+
+# Archive Storage host
+open.api.archive.certificate.host : https://kr.archive.ncloudstorage.com:5000
+open.api.archive.host : https://kr.archive.ncloudstorage.com
+open.api.archive.domainId : default
+open.api.archive.projectId : ncloud-archive-projectId
+
+#AI.NAVER.API
+open.api.ai.naver.host : https://naveropenapi.apigw.ntruss.com
+open.api.ai.naver.clientId : 2we2x4zssg
+open.api.ai.naver.secret : 1k461vSFcjrT6wpueBQ5Q7Togwq5FaJuzafx5FHx
