@@ -33,5 +33,8 @@ public class TextSummaryRequestDto {
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class OptionRequestDto {
 		private String language;
+		private String model;
+		private String tone;
+		private String summaryCount;
 	}
 }

@@ -3,9 +3,11 @@ package com.millky.blog.domain.userapi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.millky.blog.domain.dto.userapi.ainaver.req.SearchTrendRequestDto;
+import com.millky.blog.domain.dto.userapi.ainaver.req.SentimentRequestDto;
 import com.millky.blog.domain.dto.userapi.ainaver.req.TextSummaryRequestDto;
 import com.millky.blog.domain.dto.userapi.ainaver.req.TranslationRequestDto;
 import com.millky.blog.domain.dto.userapi.ainaver.res.SearchTrendResponseDto;
+import com.millky.blog.domain.dto.userapi.ainaver.res.SentimentResponseDto;
 import com.millky.blog.domain.dto.userapi.ainaver.res.TextSummaryResponseDto;
 import com.millky.blog.domain.dto.userapi.ainaver.res.TranslationResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +28,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 @Slf4j
-//@Service
+@Service
 @RequiredArgsConstructor
 public class AiNaverService {
 	@Value("${open.api.ai.naver.host}")
@@ -67,6 +69,13 @@ public class AiNaverService {
 	public TextSummaryResponseDto textSummary(TextSummaryRequestDto requestDto) {
 		final ResponseEntity<TextSummaryResponseDto> response = restTemplate.exchange(aiNaverHost + "/text-summary/v1/summarize",
 			HttpMethod.POST, new HttpEntity(requestDto, createHeader()), TextSummaryResponseDto.class);
+
+		return response.getBody();
+	}
+
+	public SentimentResponseDto sentiment(SentimentRequestDto requestDto) {
+		final ResponseEntity<SentimentResponseDto> response = restTemplate.exchange(aiNaverHost + "/sentiment-analysis/v1/analyze",
+				HttpMethod.POST, new HttpEntity(requestDto, createHeader()), SentimentResponseDto.class);
 
 		return response.getBody();
 	}

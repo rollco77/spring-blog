@@ -2,6 +2,7 @@ package com.millky.blog.domain.model.entity;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -42,7 +43,7 @@ public class ProductReview {
     @org.hibernate.annotations.Comment("평점")
     private int averagePoint;
 
-    @Column(length=1000)
+    @Column(length=4000)
     @org.hibernate.annotations.Comment("댓글 내용")
     private String content;
 
@@ -62,4 +63,20 @@ public class ProductReview {
 
     @org.hibernate.annotations.Comment("수정 일자")
     private Date modDate;
+
+    @Column(length=10)
+    @org.hibernate.annotations.Comment("감정분석 결과")
+    private String sentimentResult;
+
+    @ColumnDefault("0")
+    @org.hibernate.annotations.Comment("감정분석 부정수치")
+    private Double sentimentScoreNegative;
+
+    @ColumnDefault("0")
+    @org.hibernate.annotations.Comment("감정분석 긍정수치")
+    private Double sentimentScorePositive;
+
+    @ColumnDefault("0")
+    @org.hibernate.annotations.Comment("감정분석 중립수치")
+    private Double sentimentScoreNeutral;
 }

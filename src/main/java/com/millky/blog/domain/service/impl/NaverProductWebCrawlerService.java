@@ -2,6 +2,10 @@ package com.millky.blog.domain.service.impl;
 
 import com.millky.blog.application.utility.StringUtility;
 import com.millky.blog.domain.constant.scraping.ScrapingStatus;
+import com.millky.blog.domain.dto.userapi.ainaver.req.SentimentRequestDto;
+import com.millky.blog.domain.dto.userapi.ainaver.req.TextSummaryRequestDto;
+import com.millky.blog.domain.dto.userapi.ainaver.res.SentimentResponseDto;
+import com.millky.blog.domain.dto.userapi.ainaver.res.TextSummaryResponseDto;
 import com.millky.blog.domain.model.entity.Product;
 import com.millky.blog.domain.model.entity.ProductReview;
 import com.millky.blog.domain.model.entity.Scraping;
@@ -9,6 +13,7 @@ import com.millky.blog.domain.model.vo.NaverProdoctSelector;
 import com.millky.blog.domain.repository.ProductRepository;
 import com.millky.blog.domain.repository.ScrapingRepository;
 import com.millky.blog.domain.service.WebCrawlerService;
+import com.millky.blog.domain.userapi.AiNaverService;
 import com.rollco7.util.NumberUtil;
 import com.rollco7.util.RollcoDateUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.net.URL;
 import java.time.Duration;
 import java.util.*;
@@ -62,6 +68,9 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
     @Autowired
     ScrapingRepository scrapingRepository;
 
+    @Autowired
+    AiNaverService aiNaverService;
+
     @Value("${server.os.type}")
     private String osType;
 
@@ -86,6 +95,11 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         }
         return scrapingRepository.createScraping(scraping);
     }
+
+    public Scraping saveScraping(Scraping scraping){
+        return scrapingRepository.saveScraping(scraping);
+    }
+
 
     public List<Product> findAllByScrapingId(UUID scrapingId){
         return scrapingRepository.findProductAllByScrapingId(scrapingId);
@@ -528,8 +542,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
 
             String average = null;
             repurchaseYn = "N";
-
-
+            ProductReview productReview = new ProductReview();
             try{
 
                 if(moreLog) log.debug("[ get review step1 ]");
@@ -537,7 +550,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
                 createDateElement = reviewLi.findElement(By.cssSelector("div[class^=reviewItems_etc_area] span[class^=reviewItems_etc]:nth-of-type(4)"));
                 if(moreLog) log.debug("[ get review step2 ]");
                 average           = averageElement.getText();
-                reviewCreateDate  = RollcoDateUtil.getDateZeroTime(createDateStr);
+                reviewCreateDate  = RollcoDateUtil.getDateZeroTime(createDateElement.getText());
                 if(moreLog) log.debug("[ get review step3 ]");
                 int averagePoint  = NumberUtil.getOlnyInt(average);
 
@@ -553,7 +566,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
 
 
                 if(moreLog) log.debug("[ get review step6 ]");
-                ProductReview productReview = new ProductReview();
+
                 if(product != null){
                     //TODO product getId를 하지 않아도 되는지 확인해여 product를 set 할지 getId를 할지 결정
                     productReview.setProduct(product);
@@ -574,8 +587,8 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
             }catch(Exception ex){
                 //reviewLi.findElement(By.cssSelector("div[class^=reviewItems_etc_area]"));
                 //averageElement.getText();
-
-                log.error("[ pageNum , reviewCount ] : {} ,  {} " , pageNum, reviewCount);
+                ex.printStackTrace();
+                log.error("[ pageNum , reviewCount , productReview] : {} ,  {}  -  {}" , pageNum, reviewCount ,productReview.toString());
             }
             //String average = reviewLi.findElement(By.cssSelector("span[class^=reviewItems_average]"));
             //reviewLi.findElement()
@@ -687,4 +700,69 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         }
     }
 
+
+    /**
+     * 상품별 감정분석
+     * @param productId 상품id
+     */
+    @Transactional
+    public void sentimentAnalysisProduct(int productId){
+        List<ProductReview> productReviews = scrapingRepository.findProductReviewAllByProductId(productId);
+
+        SentimentRequestDto  reqDto = null;
+        SentimentResponseDto resDto = null;
+        String sentimentResult = null;
+        double sentimentScoreNegative ;
+        double sentimentScorePositive ;
+        double sentimentScoreNeutral  ;
+
+
+        for(ProductReview productReview : productReviews){
+            reqDto = new SentimentRequestDto();
+            reqDto.setContent(productReview.getContent());
+            resDto = aiNaverService.sentiment(reqDto);
+            sentimentResult = resDto.getDocument().getSentiment();
+            sentimentScoreNegative = resDto.getDocument().getConfidence().getNegative();
+            sentimentScorePositive = resDto.getDocument().getConfidence().getPositive();
+            sentimentScoreNeutral  = resDto.getDocument().getConfidence().getNeutral();
+
+            productReview.setSentimentResult(sentimentResult);
+            productReview.setSentimentScoreNegative(sentimentScoreNegative);
+            productReview.setSentimentScorePositive(sentimentScorePositive);
+            productReview.setSentimentScoreNeutral(sentimentScoreNeutral);
+
+            scrapingRepository.saveProductReview(productReview);
+        }
+    }
+
+    /**
+     * 리뷰 요약
+     * @param productId 상품id
+     */
+    @Transactional
+    public void textSummaryAnalysisProduct(int productId){
+        List<ProductReview> productReviews = scrapingRepository.findProductReviewAllByProductId(productId);
+
+        TextSummaryRequestDto  reqDto = null;
+        TextSummaryResponseDto resDto = null;
+        String tesxtSummaryResult     = null;
+
+        for(ProductReview productReview : productReviews){
+
+            if(productReview.getContent().length() < 60){
+                continue;
+            }
+
+            reqDto = TextSummaryRequestDto.builder().document(
+                    TextSummaryRequestDto.DocumentRequestDto.builder().content( productReview.getContent()).build())
+                    .option(TextSummaryRequestDto.OptionRequestDto.builder().language("ko").model("general").tone("2").summaryCount("1").build()).build();
+
+            resDto = aiNaverService.textSummary(reqDto);
+            tesxtSummaryResult = resDto.getSummary();
+
+            productReview.setContentSummary(tesxtSummaryResult);
+
+            scrapingRepository.saveProductReview(productReview);
+        }
+    }
 }

@@ -69,6 +69,12 @@ public class ScrapingRepository {
         return resultProductReview;
     }
 
+    public ProductReview saveProductReview( ProductReview productReview) {
+        productReview.setModDate(new Date());
+        ProductReview resultProductReview = productReviewDao.save(productReview);
+        return resultProductReview;
+    }
+
     public Scraping findScrapingById(UUID id){
         return scrapingDao.findById(id);
     }

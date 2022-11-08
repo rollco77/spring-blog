@@ -67,12 +67,18 @@ public class ScrapingController {
 
     @RequestMapping(value="/scrap/start/{scrapingId}")
     @ResponseBody
-    public HashMap<String, Object> startScraping(Model model,@PathVariable String scrapingId) {
+    public HashMap<String, Object> startScraping(Scraping scraping ,Model model,@PathVariable String scrapingId) {
         // List<Scraping> scrapinglist =  webCrawlerService.findScrapingAll();
         // model.addAttribute("scrapingList", scrapinglist);
 
         UUID uuid = UUID.fromString(scrapingId);
         Scraping resultScraping = webCrawlerService.findScraping(uuid);
+
+
+        resultScraping.setBaseScoreNeutral(scraping.getBaseScoreNeutral());
+        resultScraping.setBaseScoreNegative(scraping.getBaseScoreNegative());
+        resultScraping.setBaseScorePositive(scraping.getBaseScorePositive());
+        webCrawlerService.saveScraping(resultScraping);
 
         HashMap<String,Object> hashMap = new HashMap();
         hashMap.put("scraping", resultScraping);
@@ -109,6 +115,36 @@ public class ScrapingController {
         model.addAttribute("productReviewList", productReviewlist);
         return "scraping/productReviewList";
     }
+    @RequestMapping( value="/sentiment/analysis/{classification}/{id}" , method = RequestMethod.GET)
+    @ResponseBody
+    public HashMap<String, Object> sentiment(Model model,@PathVariable String classification,@PathVariable String id) {
 
+        if("product".equals(classification)){
+            int int_productId = NumberUtil.getOlnyInt(id);
+            webCrawlerService.sentimentAnalysisProduct(int_productId);
+        }
+        HashMap<String,Object> hashMap = new HashMap();
+        //hashMap.put("scraping", resultScraping);
+
+        //webCrawlerService.scraping(resultScraping);
+
+        return hashMap;
+    }
+
+    @RequestMapping( value="/textSummary/analysis/{classification}/{id}" , method = RequestMethod.GET)
+    @ResponseBody
+    public HashMap<String, Object> textSummary(Model model,@PathVariable String classification,@PathVariable String id) {
+
+        if("product".equals(classification)){
+            int int_productId = NumberUtil.getOlnyInt(id);
+            webCrawlerService.textSummaryAnalysisProduct(int_productId);
+        }
+        HashMap<String,Object> hashMap = new HashMap();
+        //hashMap.put("scraping", resultScraping);
+
+        //webCrawlerService.scraping(resultScraping);
+
+        return hashMap;
+    }
 
 }

@@ -93,7 +93,14 @@
 													</c:when>
    											    </c:choose>
     										</td>
-											<td><a onclick="javascript:openDetail('<c:out value="${result.id}"></c:out>','<c:out value="${result.channel}"></c:out>','<c:out value="${result.keyword}"></c:out>','<c:out value="${result.status}"></c:out>')" href="#"><c:out value="${result.keyword}"></c:out></a></td>
+											<td><a onclick="javascript:openDetail('<c:out value="${result.id}"></c:out>'
+													,'<c:out value="${result.channel}"></c:out>'
+													,'<c:out value="${result.keyword}"></c:out>'
+													,'<c:out value="${result.status}"></c:out>'
+													,'<c:out value="${result.baseScoreNegative}"></c:out>'
+													,'<c:out value="${result.baseScorePositive}"></c:out>'
+													,'<c:out value="${result.baseScoreNeutral}"></c:out>'
+													)" href="#"><c:out value="${result.keyword}"></c:out></a></td>
 											<td><c:out value="${result.status.description}"></c:out></td>
 											<td><c:out value="${result.noc}"></c:out></td>
 											<td><button type="button" class="btn-sm btn-success" onclick="go_productList('<c:out value="${result.id}"></c:out>')">
@@ -157,6 +164,47 @@
 					<label for="scrapingStatus" class="form-label">수집상태</label>
 					<input id="scrapingStatus" class="form-control" type="text" placeholder="" aria-label="" disabled>
 				</div>
+				<div class="mb-1">
+					<label for="baseScorePositive" class="form-label">감정분석 최소점수 설정</label>
+					<br>
+					<label for="baseScorePositive">긍정 </label>
+					<select class=" form-control-sm" id="baseScorePositive" size="1">
+						<option>30.0</option>
+						<option>35.0</option>
+						<option>40.0</option>
+						<option>45.0</option>
+						<option>50.0</option>
+						<option>55.0</option>
+						<option>60.0</option>
+						<option>65.0</option>
+						<option>70.0</option>
+					</select>
+					<label for="baseScoreNegative">부정 </label>
+					<select class=" form-control-sm" id="baseScoreNegative" size="1">
+						<option>30.0</option>
+						<option>35.0</option>
+						<option>40.0</option>
+						<option>45.0</option>
+						<option>50.0</option>
+						<option>55.0</option>
+						<option>60.0</option>
+						<option>65.0</option>
+						<option>70.0</option>
+					</select>
+					<label for="baseScoreNeutral">중립</label>
+					<select class=" form-control-sm" id="baseScoreNeutral" size="1">
+						<option>30.0</option>
+						<option>35.0</option>
+						<option>40.0</option>
+						<option>45.0</option>
+						<option>50.0</option>
+						<option>55.0</option>
+						<option>60.0</option>
+						<option>65.0</option>
+						<option>70.0</option>
+					</select>
+				</div>
+				<br>
 				<div>
 					* 현재 키워드당 상품몰은 광고를 제외한 상위 5개 업체의 리뷰수집을 하고 있습니다.
 				</div>
@@ -208,7 +256,9 @@
 <script >
 
 	$(document).ready(function() {
-		$('#dataTable').DataTable();
+		$('#dataTable').DataTable(
+				{ order: [ [ 1, "desc" ] ]}
+		);
 	});
 
 	$(function(){
@@ -216,6 +266,9 @@
 			$('#scrapingChannel').val("");
 			$('#keyword').val("");
 			$('#scrapingId').val("");
+			$('#baseScoreNeutral').val("50");
+			$('#baseScoreNegative').val("50");
+			$('#baseScorePositive').val("50");
 			$("#btn-scraping-insert").show();
 			$("#btn-scraping-start").hide();
 		});
@@ -233,20 +286,29 @@
 		})
 	});
 
-	function openDetail(scrapingId,scrapingChannel,keyword,status){
+	function openDetail(scrapingId,scrapingChannel,keyword,status,baseScoreNegative,baseScorePositive,baseScoreNeutral){
 		$('#myModal').modal('show');
 		$("#btn-scraping-insert").hide();
 		$('#scrapingChannel').val(scrapingChannel);
 		$('#keyword').val(keyword);
 		$('#scrapingId').val(scrapingId);
 		$('#scrapingStatus').val(status);
+		$('#baseScoreNegative').val(baseScoreNegative);
+		$('#baseScorePositive').val(baseScorePositive);
+		$('#baseScoreNeutral').val(baseScoreNeutral);
 		$("#btn-scraping-start").show();
 	}
 
 	function insertScraping(){
 		$.ajax({
 			url: "${pageContext.request.contextPath}/scraping/scrap/insert", // 클라이언트가 HTTP 요청을 보낼 서버의 URL 주소
-			data: { keyword: $("#keyword").val() , channel: $("#scrapingChannel").val() },  // HTTP 요청과 함께 서버로 보낼 데이터
+			data: {
+				keyword: $("#keyword").val() ,
+				channel: $("#scrapingChannel").val() ,
+				baseScoreNeutral : $("#baseScoreNeutral").val() ,
+				baseScorePositive : $("#baseScorePositive").val() ,
+				baseScoreNegative : $("#baseScoreNegative").val()
+			},  // HTTP 요청과 함께 서버로 보낼 데이터
 			//method: "POST",   // HTTP 요청 메소드(GET, POST 등)
 			dataType: "json" // 서버에서 보내줄 데이터의 타입
 		})
@@ -283,7 +345,13 @@
 
 		$.ajax({
 			url: "${pageContext.request.contextPath}/scraping/scrap/start/" + scrapingId, // 클라이언트가 HTTP 요청을 보낼 서버의 URL 주소
-			data: { keyword: $("#keyword").val() , channel: $("#scrapingChannel").val() },  // HTTP 요청과 함께 서버로 보낼 데이터
+			data: {
+				keyword: $("#keyword").val() ,
+				channel: $("#scrapingChannel").val() ,
+				baseScoreNeutral  : $("#baseScoreNeutral").val() ,
+				baseScorePositive : $("#baseScorePositive").val() ,
+				baseScoreNegative : $("#baseScoreNegative").val()
+			},  // HTTP 요청과 함께 서버로 보낼 데이터
 			//method: "POST",   // HTTP 요청 메소드(GET, POST 등)
 			dataType: "json" // 서버에서 보내줄 데이터의 타입
 		})

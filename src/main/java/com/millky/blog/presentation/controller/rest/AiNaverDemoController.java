@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-//@RestController
+@RestController
 @Slf4j
 public class AiNaverDemoController {
 	private final AiNaverDemoService aiNaverDemoService;
@@ -25,6 +25,11 @@ public class AiNaverDemoController {
 	@GetMapping("textSummary")
 	public void textSummary() {
 		aiNaverDemoService.textSummary();
+	}
+
+	@GetMapping("sentiment")
+	public void sentiment() {
+		aiNaverDemoService.sentiment();
 	}
 
 	@GetMapping("searchTrend")

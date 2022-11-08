@@ -3,6 +3,7 @@ package com.millky.blog.domain.model.entity;
 import com.millky.blog.domain.constant.scraping.ScrapingStatus;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -81,5 +82,14 @@ public class Scraping {
     @org.hibernate.annotations.Comment("수정자")
     //@Column(columnDefinition = "BINARY(16)")
     private UUID modifiedBy;
+
+    @ColumnDefault("0")
+    private Double baseScoreNegative;
+
+    @ColumnDefault("0")
+    private Double baseScorePositive;
+
+    @ColumnDefault("0")
+    private Double baseScoreNeutral;
 
 }

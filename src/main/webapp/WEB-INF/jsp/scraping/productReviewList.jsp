@@ -13,7 +13,7 @@
 	<meta name="description" content="">
 	<meta name="author" content="">
 
-	<title>SB Admin 2 - Dashboard 2</title>
+	<title>SB Admin 2 - Dashboard </title>
 
 	<!-- Custom fonts for this template-->
 	<link href="${pageContext.request.contextPath}/statics/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -80,6 +80,13 @@
 													<div class="h5 mb-0 font-weight-bold text-gray-800">
 														채널: ${scraping.channel.value} <br>
 														키워드: ${scraping.keyword} <br>
+														감정분석 기준점수 (긍정/부정/중립) : ${scraping.baseScorePositive}/${scraping.baseScoreNegative}/${scraping.baseScoreNeutral}
+														<button type="button" class="btn-sm btn-success" onclick="runSentimentAnalysis('${product.id} ')">
+															감정분석 실행
+														</button>
+														<button type="button" class="btn-sm btn-primary" onclick="runTextSummary('${product.id} ')">
+															문장요약 실행
+														</button>
 													</div>
 												</div>
 												<div class="col-auto">
@@ -118,11 +125,12 @@
 									<thead>
 										<tr>
 											<th style="text-align: center;width: 10%;">작성일자</th>
-											<th style="text-align: center;width: 10%;">주제</th>
-											<th style="text-align: center;width: 40%;">내용</th>
-											<th style="text-align: center;width: 40%;">평점</th>
-											<th style="text-align: center;width: 10%;">재구매 여부</th>
-											<th style="text-align: center;width: 40%;">상품요약정보</th>
+											<th style="text-align: center;width: 7%;">주제</th>
+											<th style="text-align: center;width: 35%;">내용</th>
+											<th style="text-align: center;width: 7%;">평점</th>
+											<th style="text-align: center;width: 11%;">재구매<br>여부</th>
+											<th style="text-align: center;width: 10%;">감정분석</th>
+											<th style="text-align: center;width: 25%;">리뷰요약</th>
 										</tr>
 									</thead>
 									<tfoot>
@@ -130,12 +138,22 @@
 									<tbody>
 									<c:forEach var="result" items="${productReviewList}" varStatus="status">
 										<tr>
-											<td>${result.reviewCreateDate}</td>
-											<td>${result.topic}</td>
-											<td>${result.content}</td>
-											<td>${result.averagePoint}</td>
-											<td>${result.repurchaseYn}</td>
-											<td><c:out value="${result.contentSummary}"></c:out></td>
+											<fmt:formatDate var="reviewCreateDate" pattern="yyyy-MM-dd" value="${result.reviewCreateDate}"></fmt:formatDate>
+											<td><small>${reviewCreateDate}</small></td>
+											<td><small>${result.topic}</small></td>
+											<td><small>${result.content}</small></td>
+											<td><small>${result.averagePoint}</small></td>
+											<td><small>${result.repurchaseYn}</small></td>
+											<td>
+												<c:if test="${result.sentimentScorePositive != null}">
+													<small><c:if test="${result.sentimentResult eq 'positive' }"><p class="text-success">긍정</p></c:if><c:if test="${result.sentimentResult eq 'negative' }"><p class="text-danger">부정</p></c:if>
+													긍정:<fmt:formatNumber type="number" maxFractionDigits="4" value=" ${result.sentimentScorePositive}" /> <br>
+													부정:<fmt:formatNumber type="number" maxFractionDigits="4" value=" ${result.sentimentScoreNegative}" /><br>
+													중립:<fmt:formatNumber type="number" maxFractionDigits="4" value=" ${result.sentimentScoreNeutral}" /><br>
+												</c:if>
+												</small>
+											</td>
+											<td><small><c:out value="${result.contentSummary}"></c:out></small></td>
 										</tr>
 									</c:forEach>
 									</tbody>
@@ -238,7 +256,7 @@
 <script >
 
 	$(document).ready(function() {
-		$('#dataTable').DataTable();
+		$('#dataTable').DataTable({ order: [ [ 0 , "desc" ] ]});
 	});
 
 	$(function(){
@@ -292,6 +310,64 @@
 	function go_productList(scrapingId){
 		location.href="${pageContext.request.contextPath}/scraping/product/list/"+scrapingId;
  	}
+
+	/**
+	 * 감정분석 실행
+	 * @param productId
+	 */
+	function runSentimentAnalysis(productId){
+		$.ajax({
+			url: "${pageContext.request.contextPath}/scraping/sentiment/analysis/product/"+productId, // 클라이언트가 HTTP 요청을 보낼 서버의 URL 주소
+			//data: { keyword: $("#keyword").val() , channel: $("#scrapingChannel").val() },  // HTTP 요청과 함께 서버로 보낼 데이터
+			//method: "POST",   // HTTP 요청 메소드(GET, POST 등)
+			dataType: "json" // 서버에서 보내줄 데이터의 타입
+		})
+		// HTTP 요청이 성공하면 요청한 데이터가 done() 메소드로 전달됨.
+		.done(function(json) {
+			alert("감정분석 완료");
+			//$("<h1>").text(json.title).appendTo("body");
+			//$("<div class=\"content\">").html(json.html).appendTo("body");
+		})
+		// HTTP 요청이 실패하면 오류와 상태에 관한 정보가 fail() 메소드로 전달됨.
+		.fail(function(xhr, status, errorThrown) {
+			$("#result_text").html("오류가 발생했다.<br>")
+					.append("오류명: " + errorThrown + "<br>")
+					.append("상태: " + status);
+		})
+		//
+		.always(function(xhr, status) {
+			//$("#result_text").html("요청이 완료되었습니다!");
+		});
+	}
+
+	/**
+	 * 문장요약 실행
+	 * @param productId
+	 */
+	function runTextSummary(productId){
+		$.ajax({
+			url: "${pageContext.request.contextPath}/scraping/textSummary/analysis/product/"+productId, // 클라이언트가 HTTP 요청을 보낼 서버의 URL 주소
+			//data: { keyword: $("#keyword").val() , channel: $("#scrapingChannel").val() },  // HTTP 요청과 함께 서버로 보낼 데이터
+			//method: "POST",   // HTTP 요청 메소드(GET, POST 등)
+			dataType: "json" // 서버에서 보내줄 데이터의 타입
+		})
+		// HTTP 요청이 성공하면 요청한 데이터가 done() 메소드로 전달됨.
+		.done(function(json) {
+			alert("리뷰요약 완료");
+			//$("<h1>").text(json.title).appendTo("body");
+			//$("<div class=\"content\">").html(json.html).appendTo("body");
+		})
+		// HTTP 요청이 실패하면 오류와 상태에 관한 정보가 fail() 메소드로 전달됨.
+		.fail(function(xhr, status, errorThrown) {
+			$("#result_text").html("오류가 발생했다.<br>")
+					.append("오류명: " + errorThrown + "<br>")
+					.append("상태: " + status);
+		})
+		//
+		.always(function(xhr, status) {
+			//$("#result_text").html("요청이 완료되었습니다!");
+		});
+	}
 </script>
 <!-- Page level custom scripts -->
 <%--

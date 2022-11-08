@@ -3,9 +3,11 @@ package com.millky.blog.domain.userapi;
 
 import com.millky.blog.domain.dto.userapi.ainaver.constant.LangEnum;
 import com.millky.blog.domain.dto.userapi.ainaver.req.SearchTrendRequestDto;
+import com.millky.blog.domain.dto.userapi.ainaver.req.SentimentRequestDto;
 import com.millky.blog.domain.dto.userapi.ainaver.req.TextSummaryRequestDto;
 import com.millky.blog.domain.dto.userapi.ainaver.req.TranslationRequestDto;
 import com.millky.blog.domain.dto.userapi.ainaver.res.SearchTrendResponseDto;
+import com.millky.blog.domain.dto.userapi.ainaver.res.SentimentResponseDto;
 import com.millky.blog.domain.dto.userapi.ainaver.res.TextSummaryResponseDto;
 import com.millky.blog.domain.dto.userapi.ainaver.res.TranslationResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 
 @Slf4j
-//@Service
+@Service
 @RequiredArgsConstructor
 public class AiNaverDemoService {
 	private final AiNaverService aiNaverService;
@@ -51,6 +53,18 @@ public class AiNaverDemoService {
 		System.out.println("Plan Text : " + requestDto.getDocument().getContent());
 		System.out.println("Summary Text : " + responseDto.getSummary());
 	}
+
+	public void sentiment() {
+		final SentimentRequestDto requestDto = SentimentRequestDto.builder().content(
+				"평소 먼지나 반려동물 털 알레르 평소 먼지나 반려동물 털 알레르기, 비염이 심해서 공기청정기를 알아보고 있었는데, TV 광고를 통해서 LG 에어로타워가 눈에 들어오더라고요! 그렇게 신혼집 입주를 하고 추가적으로 구입한 공기청정기라서, 정말 열심히 성능, 가격 비교해보고 선택했어요. 요즘 가장 핫한 공기청정기라서 구입을 하고 나서, 배송이 조금 지연된다는 연락을 받았는데 다행히도 7일만에 받아보았어요! 설치기사님께서 오셔서 정말 친절하게 설치 + 안내를 해주셔서 더 기분 좋게 받아볼 수 있었답니다! 역시 비주얼 + 성능 중에 가장 TOP인 . 저희 신혼집에 정말 잘 어울리는 ! 저희 집에서는 음식할 때 환풍기가 제대로 작동이 안되서 냄새 빼는데 시간이 정말 오래걸렸었는데, 에어로타워를 들이고 나니깐 . 온풍까지 되는 기종을 선택했더니 요즘처럼 추운 겨울엔 아주 딱인 것 같아요. 어플 다운 받아서 UP가전 업그레이드부터 . 정말 만족 그 자체인 LG 에어로타워 :-) 고민마시고 구입하세요!!"
+				).build();
+
+		final SentimentResponseDto responseDto = aiNaverService.sentiment(requestDto);
+
+		System.out.println("Plan Text : " + requestDto.getContent());
+		System.out.println("Summary Text : " + responseDto.getDocument().getSentiment());
+	}
+
 
 	public void searchTrend() {
 		final SearchTrendRequestDto requestDto = SearchTrendRequestDto.builder()
