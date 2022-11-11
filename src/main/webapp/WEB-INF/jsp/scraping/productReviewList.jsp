@@ -127,8 +127,10 @@
 											<th style="text-align: center;width: 10%;">작성일자</th>
 											<th style="text-align: center;width: 7%;">주제</th>
 											<th style="text-align: center;width: 35%;">내용</th>
+											<th style="text-align: center;width: 3%;">len</th>
+
 											<th style="text-align: center;width: 7%;">평점</th>
-											<th style="text-align: center;width: 11%;">재구매<br>여부</th>
+											<th style="text-align: center;width: 8%;">재구매<br>여부</th>
 											<th style="text-align: center;width: 10%;">감정분석</th>
 											<th style="text-align: center;width: 25%;">리뷰요약</th>
 										</tr>
@@ -142,6 +144,8 @@
 											<td><small>${reviewCreateDate}</small></td>
 											<td><small>${result.topic}</small></td>
 											<td><small>${result.content}</small></td>
+											<td><small>${fn:length(result.content) }</small></td>
+
 											<td><small>${result.averagePoint}</small></td>
 											<td><small>${result.repurchaseYn}</small></td>
 											<td>
@@ -256,7 +260,29 @@
 <script >
 
 	$(document).ready(function() {
-		$('#dataTable').DataTable({ order: [ [ 0 , "desc" ] ]});
+		$('#dataTable').DataTable({
+			//dom: 'Bfrtip',
+			buttons: [
+				{
+					extend: 'excel'
+					,text: '엑셀출력'
+					,filename: '엑셀파일명'
+					,title: '엑셀파일 안에 쓰일 제목'
+				},
+				{
+					extend: 'copy'
+					,text: '클립보드 복사'
+					,title: '클립보드 복사 내용'
+				},
+				{
+					extend: 'csv'
+					,text: 'csv출력'
+					,filename: 'utf-8이라서 ms엑셀로 바로 열면 글자 깨짐'
+				},
+			] ,
+			order: [ [ 0 , "desc" ] ]
+
+		});
 	});
 
 	$(function(){

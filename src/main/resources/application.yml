@@ -67,6 +67,7 @@ crawler:
         domains :
             smartStore : smartstore.naver.com
             searchShopping: search.shopping.naver.com
+            shopping : shopping.naver.com
 
 
 # NCloud User Open API

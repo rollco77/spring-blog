@@ -59,7 +59,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
 
     static{
         moreLog        = false;
-        chromeHeadLess = false;
+        chromeHeadLess = true;
     }
 
     @Autowired
@@ -82,6 +82,10 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
 
     @Value("${crawler.naver.domains.searchShopping}")
     private String DOMAIN_SEARCHSHOPPING;
+
+    @Value("${crawler.naver.domains.shopping}")
+    private String DOMAIN_SHOPPING;
+
 
 
 
@@ -161,6 +165,13 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
 
         ChromeOptions options = new ChromeOptions();
         options.setHeadless(chromeHeadLess);      //headless=true 인 경우 크롬 창을 띄우지 않는다.
+        /*options.addArguments("start-maximized"); // open Browser in maximized mode
+        options.addArguments("disable-infobars"); // disabling infobars
+        options.addArguments("--disable-extensions"); // disabling extensions
+        options.addArguments("--disable-gpu"); // applicable to windows os only
+        options.addArguments("--disable-dev-shm-usage"); // overcome limited resource problems
+        options.addArguments("--remote-debugging-port=9222"); // overcome limited resource problems
+*/
         ChromiumDriver webDriver = new ChromeDriver(options);
         webDriver.get(NAVER_SHOPPING_START_PAGE_URL);
         Duration duration  = Duration.ofSeconds(5);
@@ -271,6 +282,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
 
         //TODO 수집상태 수집완료 변경
         webDriver.close();
+        webDriver.quit();
     }
 
     private void openDetailProductPage(String url){
@@ -313,7 +325,14 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         prefs.put("profile.default_content_settings", images);
         //prefs.put("profile.managed_default_content_settings.images", 2);
         ChromeOptions options = new ChromeOptions();
-        options.setHeadless(chromeHeadLess);
+        options.setHeadless(chromeHeadLess);      //headless=true 인 경우 크롬 창을 띄우지 않는다.
+        /*options.addArguments("start-maximized"); // open Browser in maximized mode
+        options.addArguments("disable-infobars"); // disabling infobars
+        options.addArguments("--disable-extensions"); // disabling extensions
+        options.addArguments("--disable-gpu"); // applicable to windows os only
+        options.addArguments("--disable-dev-shm-usage"); // overcome limited resource problems
+        options.addArguments("--remote-debugging-port=9222"); // overcome limited resource problems
+        */
         //options.setExperimentalOption("prefs", prefs);
         options.addArguments("--blink-setting=imagesEnable=false"); // 페이지 로딩에서 이미지 제외
         ChromiumDriver webDriver = new ChromeDriver(options);
@@ -331,7 +350,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
             log.debug("#### ouccur exception by open url with chromedriver. url :{} ",url);
         }
 
-        NaverProdoctSelector selector  = new NaverProdoctSelector(domain, DOMAIN_SMARTSTORE,DOMAIN_SEARCHSHOPPING);
+        NaverProdoctSelector selector  = new NaverProdoctSelector(domain, DOMAIN_SMARTSTORE,DOMAIN_SEARCHSHOPPING,DOMAIN_SHOPPING);
         log.debug("selector.getReviewTopicDivision():" + selector.getReviewTopicDivision());
         sleep(2);
         //리뷰 주제 element를 가져온다.
@@ -366,7 +385,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
                     getSearchStoreReview(webDriver , webElement , product );
                     log.debug(topicName);
                 }
-            }else if(DOMAIN_SMARTSTORE.equals(domain)){
+            }else if(DOMAIN_SMARTSTORE.equals(domain) || DOMAIN_SHOPPING.equals(domain) ){
 
                 //reviewTopics = webDriver.findElements(By.cssSelector("div[id=REVIEW] div[class^=eg-flick-camera] button"));
 
@@ -383,6 +402,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
             log.error(Arrays.toString(e.getStackTrace()));
         }finally {
             webDriver.close();
+            webDriver.quit();
         }
     }
 
@@ -718,6 +738,9 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
 
 
         for(ProductReview productReview : productReviews){
+            if(productReview.getContent().length() < 100){
+                continue;
+            }
             reqDto = new SentimentRequestDto();
             reqDto.setContent(productReview.getContent());
             resDto = aiNaverService.sentiment(reqDto);
@@ -749,7 +772,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
 
         for(ProductReview productReview : productReviews){
 
-            if(productReview.getContent().length() < 60){
+            if(productReview.getContent().length() < 100){
                 continue;
             }
 
