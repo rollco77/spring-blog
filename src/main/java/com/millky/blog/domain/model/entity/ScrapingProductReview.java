@@ -32,7 +32,7 @@ public class ProductReview {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productId", insertable = false, updatable = false)
     @org.hibernate.annotations.Comment("상품 ID")
-    private Product product;
+    private ScrapingProduct product;
 
     private int productId;
 
