@@ -1,7 +1,6 @@
 package com.millky.blog.domain.repository;
 
-import com.millky.blog.domain.model.entity.PostTag;
-import com.millky.blog.domain.model.entity.Product;
+import com.millky.blog.domain.model.entity.ScrapingProduct;
 import com.millky.blog.infrastructure.dao.ProductDao;
 import com.rollco7.util.RollcoDateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +25,15 @@ public class ProductRepository {
     @Autowired
     ProductDao productDao;
 
-    public Product findPrductById(int id){
+    public ScrapingProduct findPrductById(int id){
         return productDao.findById(id);
     }
 
-    public List<Product> findAllByScrapingId(UUID scrpaingId){
+    public List<ScrapingProduct> findAllByScrapingId(UUID scrpaingId){
         return productDao.findAllByScrapingId(scrpaingId);
     }
 
-    public List<Product> findAllProductByDate(String yyyyMMddDate){
+    public List<ScrapingProduct> findAllProductByDate(String yyyyMMddDate){
         // Date
 
         if(yyyyMMddDate == null || yyyyMMddDate.length() < 8){
@@ -45,8 +44,8 @@ public class ProductRepository {
         return productDao.findAllByRegDateBetween(startDateCondition,endDateCondition);
     }
 
-    public void createProduct( Product product) {
-        Product resultProduct = productDao.save(product);
+    public void createProduct( ScrapingProduct product) {
+        ScrapingProduct resultProduct = productDao.save(product);
     }
 
 }

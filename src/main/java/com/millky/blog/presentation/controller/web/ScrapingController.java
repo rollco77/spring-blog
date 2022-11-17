@@ -1,7 +1,7 @@
 package com.millky.blog.presentation.controller.web;
 
-import com.millky.blog.domain.model.entity.Product;
-import com.millky.blog.domain.model.entity.ProductReview;
+import com.millky.blog.domain.model.entity.ScrapingProduct;
+import com.millky.blog.domain.model.entity.ScrapingProductReview;
 import com.millky.blog.domain.model.entity.Scraping;
 import com.millky.blog.domain.service.WebCrawlerService;
 import com.rollco7.util.NumberUtil;
@@ -92,7 +92,7 @@ public class ScrapingController {
         public String productList(Model model,@PathVariable String scrapingId) {
 
         UUID uuid = UUID.fromString(scrapingId);
-            List<Product> productlist =  webCrawlerService.findAllByScrapingId(uuid);
+            List<ScrapingProduct> productlist =  webCrawlerService.findAllByScrapingId(uuid);
         Scraping scraping = webCrawlerService.findScraping(uuid);
 
         model.addAttribute("scraping", scraping);
@@ -106,8 +106,8 @@ public class ScrapingController {
 
         int int_productId = NumberUtil.getOlnyInt(productId);
 
-        Product product = webCrawlerService.findByProductId(int_productId);
-        List<ProductReview> productReviewlist =  webCrawlerService.findProductReviewAllByProductId(int_productId);
+        ScrapingProduct product = webCrawlerService.findByProductId(int_productId);
+        List<ScrapingProductReview> productReviewlist =  webCrawlerService.findProductReviewAllByProductId(int_productId);
         Scraping scraping = webCrawlerService.findScraping(product.getScrapingId());
 
         model.addAttribute("scraping", scraping);

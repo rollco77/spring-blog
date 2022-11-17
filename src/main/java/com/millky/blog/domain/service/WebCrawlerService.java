@@ -1,7 +1,7 @@
 package com.millky.blog.domain.service;
 
-import com.millky.blog.domain.model.entity.Product;
-import com.millky.blog.domain.model.entity.ProductReview;
+import com.millky.blog.domain.model.entity.ScrapingProduct;
+import com.millky.blog.domain.model.entity.ScrapingProductReview;
 import com.millky.blog.domain.model.entity.Scraping;
 
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.UUID;
  */
 public interface WebCrawlerService {
     public void productSearchCrawl(Scraping scraping);
-    public void productReviewCrawl(Product product);
+    public void productReviewCrawl(ScrapingProduct product);
     public void selectProductTest();
     public void scraping(Scraping scraping);
     public Scraping findScraping(UUID scrapingId);
@@ -27,9 +27,9 @@ public interface WebCrawlerService {
     public Scraping insertScraping(Scraping scraping);
     public Scraping saveScraping(Scraping scraping);
 
-    public Product findByProductId(int productId);
-    public List<Product> findAllByScrapingId(UUID scrapingId);
-    public List<ProductReview> findProductReviewAllByProductId(int productId);
+    public ScrapingProduct findByProductId(int productId);
+    public List<ScrapingProduct> findAllByScrapingId(UUID scrapingId);
+    public List<ScrapingProductReview> findProductReviewAllByProductId(int productId);
 
     public void sentimentAnalysisProduct(int productId);
 

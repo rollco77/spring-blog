@@ -342,7 +342,7 @@
 			alert("수집 작업 등록 후 진행바랍니다.");
 			return;
 		}
-
+		$('#cover-spin').show(0);
 		$.ajax({
 			url: "${pageContext.request.contextPath}/scraping/scrap/start/" + scrapingId, // 클라이언트가 HTTP 요청을 보낼 서버의 URL 주소
 			data: {
@@ -369,6 +369,7 @@
 		})
 		//
 		.always(function(xhr, status) {
+			$('#cover-spin').hide(0);
 			$("#result_text").html("요청이 완료되었습니다!");
 		});
 	}

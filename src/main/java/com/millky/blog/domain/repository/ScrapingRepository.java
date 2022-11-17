@@ -1,7 +1,7 @@
 package com.millky.blog.domain.repository;
 
-import com.millky.blog.domain.model.entity.Product;
-import com.millky.blog.domain.model.entity.ProductReview;
+import com.millky.blog.domain.model.entity.ScrapingProduct;
+import com.millky.blog.domain.model.entity.ScrapingProductReview;
 import com.millky.blog.domain.model.entity.Scraping;
 import com.millky.blog.infrastructure.dao.ProductDao;
 import com.millky.blog.infrastructure.dao.ProductReviewDao;
@@ -36,42 +36,42 @@ public class ScrapingRepository {
     @Autowired
     private ScrapingDao scrapingDao;
 
-    public Product findPrductById(int id){
+    public ScrapingProduct findPrductById(int id){
         return productDao.findById(id);
     }
 
-    public List<Product> findProductAllByScrapingId(UUID scrapingId){
+    public List<ScrapingProduct> findProductAllByScrapingId(UUID scrapingId){
         return productDao.findAllByScrapingId(scrapingId);
     }
 
-    public Product createProduct( Product product) {
-        Product resultProduct = productDao.save(product);
+    public ScrapingProduct createProduct(ScrapingProduct product) {
+        ScrapingProduct resultProduct = productDao.save(product);
         return resultProduct;
     }
 
-    public Product saveProduct( Product product) {
+    public ScrapingProduct saveProduct(ScrapingProduct product) {
         product.setModDate(new Date());
-        Product resultProduct = productDao.save(product);
+        ScrapingProduct resultProduct = productDao.save(product);
         return resultProduct;
     }
 
 
-    public ProductReview findPrductReviewById(int id){
+    public ScrapingProductReview findPrductReviewById(int id){
         return productReviewDao.findById(id);
     }
 
-    public List<ProductReview> findProductReviewAllByProductId(int productId){
+    public List<ScrapingProductReview> findProductReviewAllByProductId(int productId){
         return productReviewDao.findAllByProductId(productId);
     }
 
-    public ProductReview createProductReview( ProductReview productReview) {
-        ProductReview resultProductReview = productReviewDao.save(productReview);
+    public ScrapingProductReview createProductReview(ScrapingProductReview productReview) {
+        ScrapingProductReview resultProductReview = productReviewDao.save(productReview);
         return resultProductReview;
     }
 
-    public ProductReview saveProductReview( ProductReview productReview) {
+    public ScrapingProductReview saveProductReview(ScrapingProductReview productReview) {
         productReview.setModDate(new Date());
-        ProductReview resultProductReview = productReviewDao.save(productReview);
+        ScrapingProductReview resultProductReview = productReviewDao.save(productReview);
         return resultProductReview;
     }
 

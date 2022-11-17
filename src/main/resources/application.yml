@@ -86,5 +86,7 @@ open.api.archive.projectId : ncloud-archive-projectId
 
 #AI.NAVER.API
 open.api.ai.naver.host : https://naveropenapi.apigw.ntruss.com
-open.api.ai.naver.clientId : 2we2x4zssg
-open.api.ai.naver.secret : 1k461vSFcjrT6wpueBQ5Q7Togwq5FaJuzafx5FHx
+#open.api.ai.naver.clientId : 2we2x4zssg
+#open.api.ai.naver.secret : 1k461vSFcjrT6wpueBQ5Q7Togwq5FaJuzafx5FHx
+open.api.ai.naver.clientId : bgvcrjdhxc
+open.api.ai.naver.secret : fh6cfFIu06YTl50wFZwrvpn67gAiaN1z9JsjHOgV

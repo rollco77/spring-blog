@@ -20,9 +20,9 @@ import java.util.Date;
 @Entity
 @Slf4j
 @Data
-@Table(name="T_PRODUCT_REVIEW")
+@Table(name="T_SCRAPING_PRODUCT_REVIEW")
 //@org.hibernate.annotations.Table(comment = "상품 리뷰", appliesTo = "T_PRODUCT_REVIEW")
-public class ProductReview {
+public class ScrapingProductReview {
 
     @Id
     @GeneratedValue

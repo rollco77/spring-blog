@@ -1,13 +1,12 @@
 package com.millky.blog.domain.service.impl;
 
-import com.millky.blog.application.utility.StringUtility;
 import com.millky.blog.domain.constant.scraping.ScrapingStatus;
 import com.millky.blog.domain.dto.userapi.ainaver.req.SentimentRequestDto;
 import com.millky.blog.domain.dto.userapi.ainaver.req.TextSummaryRequestDto;
 import com.millky.blog.domain.dto.userapi.ainaver.res.SentimentResponseDto;
 import com.millky.blog.domain.dto.userapi.ainaver.res.TextSummaryResponseDto;
-import com.millky.blog.domain.model.entity.Product;
-import com.millky.blog.domain.model.entity.ProductReview;
+import com.millky.blog.domain.model.entity.ScrapingProduct;
+import com.millky.blog.domain.model.entity.ScrapingProductReview;
 import com.millky.blog.domain.model.entity.Scraping;
 import com.millky.blog.domain.model.vo.NaverProdoctSelector;
 import com.millky.blog.domain.repository.ProductRepository;
@@ -17,6 +16,7 @@ import com.millky.blog.domain.userapi.AiNaverService;
 import com.rollco7.util.NumberUtil;
 import com.rollco7.util.RollcoDateUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -24,7 +24,6 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.chromium.ChromiumDriver;
 //import org.openqa.selenium.chromium.ChromiumOptions;
 //import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,7 +104,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
     }
 
 
-    public List<Product> findAllByScrapingId(UUID scrapingId){
+    public List<ScrapingProduct> findAllByScrapingId(UUID scrapingId){
         return scrapingRepository.findProductAllByScrapingId(scrapingId);
     }
 
@@ -113,11 +112,11 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         return scrapingRepository.findScrapingById(scrapingId);
     }
 
-    public Product findByProductId(int product){
+    public ScrapingProduct findByProductId(int product){
         return scrapingRepository.findPrductById(product);
     }
 
-    public List<ProductReview> findProductReviewAllByProductId(int product){
+    public List<ScrapingProductReview> findProductReviewAllByProductId(int product){
         return scrapingRepository.findProductReviewAllByProductId(product);
     }
 
@@ -145,9 +144,9 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         scraping.setStatus(ScrapingStatus.P2);
         scraping = scrapingRepository.saveScraping(scraping);
 
-        List<Product> productList = scrapingRepository.findProductAllByScrapingId(scrapingId);
+        List<ScrapingProduct> productList = scrapingRepository.findProductAllByScrapingId(scrapingId);
 
-        for(Product product : productList){
+        for(ScrapingProduct product : productList){
             productReviewCrawl(product);
             product.setCollectCommentYn("Y");
             scrapingRepository.saveProduct(product);
@@ -160,19 +159,8 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
 
     public void productSearchCrawl(Scraping scraping) {
 
-        System.setProperty(CHROME_WEB_DRIVER_PROP_NAME, chromedriverPath);
-        //Chrome
+        ChromiumDriver webDriver = getChromiumDriver();
 
-        ChromeOptions options = new ChromeOptions();
-        options.setHeadless(chromeHeadLess);      //headless=true 인 경우 크롬 창을 띄우지 않는다.
-        /*options.addArguments("start-maximized"); // open Browser in maximized mode
-        options.addArguments("disable-infobars"); // disabling infobars
-        options.addArguments("--disable-extensions"); // disabling extensions
-        options.addArguments("--disable-gpu"); // applicable to windows os only
-        options.addArguments("--disable-dev-shm-usage"); // overcome limited resource problems
-        options.addArguments("--remote-debugging-port=9222"); // overcome limited resource problems
-*/
-        ChromiumDriver webDriver = new ChromeDriver(options);
         webDriver.get(NAVER_SHOPPING_START_PAGE_URL);
         Duration duration  = Duration.ofSeconds(5);
         WebDriverWait wait = new WebDriverWait(webDriver, duration);
@@ -201,11 +189,6 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
             e.printStackTrace();
         }
 
-        //webDriver.close();
-        //List<WebElement> itemListDivs  = webDriver.findElements(By.cssSelector(".list_basis > div > div"));
-        //List<WebElement> itemListDivs  = webDriver.findElements(By.xpath("/html/body/div/div/div[2]/div[3]/div/ul/div/div/"));
-        //WebElement itemListDiv  = webDriver.findElement(By.xpath("/html/body/div/div/div[2]/div[2]/div[3]/div/ul/div/div"));
-
         WebElement itemListDiv  = null;
         try{
             itemListDiv  = webDriver.findElement(By.xpath("/html/body/div/div/div[2]/div[2]/div[3]/div/ul/div"));
@@ -223,13 +206,12 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
 
         String advertisementText        = null;
 
-        int loopCount = 0;
-
-        //TODO 수집상태 수집중으로 변경
+        int loopCount   = 0;
+        int targetCount = 5;
 
         for( WebElement divElementObj : itemListDivs){
 
-            if(loopCount >= 5){
+            if(loopCount >= targetCount){
                 break;
             }
             loopCount++;
@@ -258,7 +240,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
             alink              = divElementObj.findElement(By.cssSelector("a[class^='basicList_link']"));
             String href        = alink.getAttribute("href");
             String title       = alink.getAttribute("title");
-
+            
             productMallElement = divElementObj.findElement(By.cssSelector("a[class^='basicList_mall']"));
             String mallName    = productMallElement.getText();
 
@@ -267,7 +249,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
             //sleep(2);
             //webDriver.executeScript("arguments[0].scrollIlntoView(true);", alink);
 
-            Product product = new Product();
+            ScrapingProduct product = new ScrapingProduct();
             product.setScrapingId(scraping.getId());
             product.setScraping(scraping);
 
@@ -285,36 +267,8 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         webDriver.quit();
     }
 
-    private void openDetailProductPage(String url){
-        ChromiumDriver webDriver = new ChromeDriver();
-        webDriver.get(url);
-    }
-
-    private void sleep(int second){
-        try {
-            Thread.sleep(1000*second);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void productReviewCrawl(Product product) {
-
-        //String url   = "https://search.shopping.naver.com/catalog/32152670618?query=%EA%B3%B5%EA%B8%B0%EC%B2%AD%EC%A0%95%EA%B8%B0&NaPm=ct%3Dl8jknjpk%7Cci%3Dc20da9d24cfd7d47067b9db861acdd14fce8db2a%7Ctr%3Dslsl%7Csn%3D95694%7Chk%3Dc312841b1544d91d4cdf3d8d19e32140f9a2bad4";
-        String url   = "https://smartstore.naver.com/chois_driedfish/products/5078838516?NaPm=ct%3Dla4vo68g%7Cci%3D634c4604c683c19a09e73d51674370847fb0096c%7Ctr%3Dslsl%7Csn%3D1811697%7Chk%3D630112e754d3101d31855f2f67702c30b9155637";
-        //String url   = "https://search.shopping.naver.com/catalog/21812315770?adId=nad-a001-02-000000164970440&channel=nshop.npla&query=%EA%B3%B5%EA%B8%B0%EC%B2%AD%EC%A0%95%EA%B8%B0&NaPm=ct%3Dl842isz4%7Cci%3D0HrQ0e0s42fxSb2owflr%7Ctr%3Dpla%7Chk%3Dbe841d6f305f33fdf741ec779883f44b8e08060d&cid=0HrQ0e0s42fxSb2owflr";
-
-        //String url = "https://search.shopping.naver.com/catalog/31692999942?query=%EC%95%84%EC%9B%83%EB%8F%84%EC%96%B4&NaPm=ct%3Dl96bi5nc%7Cci%3D902a07df3ec7af19f3761ee39b516b8c8d8016f0%7Ctr%3Dslsl%7Csn%3D95694%7Chk%3D968692b583e356bde9eff72f4e99ba560e197614";
-
-        if(product != null){
-            url = product.getHref();
-        }else{
-            product = new Product();
-            product.setHref(url);
-        }
-
-        String domain   = "";
-
+    @NotNull
+    private ChromiumDriver getChromiumDriver() {
         System.setProperty("webdriver.chrome.driver", chromedriverPath);
         //Chrome
 
@@ -336,6 +290,40 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         //options.setExperimentalOption("prefs", prefs);
         options.addArguments("--blink-setting=imagesEnable=false"); // 페이지 로딩에서 이미지 제외
         ChromiumDriver webDriver = new ChromeDriver(options);
+        return webDriver;
+    }
+
+    private void openDetailProductPage(String url){
+        ChromiumDriver webDriver = new ChromeDriver();
+        webDriver.get(url);
+    }
+
+    private void sleep(int second){
+        try {
+            Thread.sleep(1000*second);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void productReviewCrawl(ScrapingProduct product) {
+
+        //String url   = "https://search.shopping.naver.com/catalog/32152670618?query=%EA%B3%B5%EA%B8%B0%EC%B2%AD%EC%A0%95%EA%B8%B0&NaPm=ct%3Dl8jknjpk%7Cci%3Dc20da9d24cfd7d47067b9db861acdd14fce8db2a%7Ctr%3Dslsl%7Csn%3D95694%7Chk%3Dc312841b1544d91d4cdf3d8d19e32140f9a2bad4";
+        String url   = "https://smartstore.naver.com/chois_driedfish/products/5078838516?NaPm=ct%3Dla4vo68g%7Cci%3D634c4604c683c19a09e73d51674370847fb0096c%7Ctr%3Dslsl%7Csn%3D1811697%7Chk%3D630112e754d3101d31855f2f67702c30b9155637";
+        //String url   = "https://search.shopping.naver.com/catalog/21812315770?adId=nad-a001-02-000000164970440&channel=nshop.npla&query=%EA%B3%B5%EA%B8%B0%EC%B2%AD%EC%A0%95%EA%B8%B0&NaPm=ct%3Dl842isz4%7Cci%3D0HrQ0e0s42fxSb2owflr%7Ctr%3Dpla%7Chk%3Dbe841d6f305f33fdf741ec779883f44b8e08060d&cid=0HrQ0e0s42fxSb2owflr";
+
+        //String url = "https://search.shopping.naver.com/catalog/31692999942?query=%EC%95%84%EC%9B%83%EB%8F%84%EC%96%B4&NaPm=ct%3Dl96bi5nc%7Cci%3D902a07df3ec7af19f3761ee39b516b8c8d8016f0%7Ctr%3Dslsl%7Csn%3D95694%7Chk%3D968692b583e356bde9eff72f4e99ba560e197614";
+
+        if(product != null){
+            url = product.getHref();
+        }else{
+            product = new ScrapingProduct();
+            product.setHref(url);
+        }
+
+        String domain   = "";
+
+        ChromiumDriver webDriver = getChromiumDriver();
         //ChromiumDriver webDriver = new ChromeDriver();
         //Duration duration        = Duration.ofSeconds(3); //wait 옵션에 사용하려 했으나 적용이 안되는듯.
         //webDriver.get("https://search.shopping.naver.com/catalog/25836450522?query=%EA%B3%B5%EA%B8%B0%EC%B2%AD%EC%A0%95%EA%B8%B0&NaPm=ct%3Dl6g9vb0g%7Cci%3Dbe3e84698db79149d6b6e9b31ab55a8eb2df85bf%7Ctr%3Dslsl%7Csn%3D95694%7Chk%3D32b56f35640984c752daf6cf7d71acc69faabeb7");
@@ -344,13 +332,20 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         //String shoppingmall_review = "/html/body/div/div/div[2]/div[2]/div[2]/div[3]/div[6]/ul";
 
         try {
+            
             domain = new URL(webDriver.getCurrentUrl()).getHost().toString();
             log.debug("#### domain for product detail page :{} ",domain);
+            //네이버관련 도메인이 아닌 경우 pass
+            
+            if(!DOMAIN_SMARTSTORE.equals(domain) && !DOMAIN_SEARCHSHOPPING.equals(domain) && !DOMAIN_SHOPPING.equals(domain)){
+                return;
+            }
         } catch (Exception e) {
             log.debug("#### ouccur exception by open url with chromedriver. url :{} ",url);
         }
 
         NaverProdoctSelector selector  = new NaverProdoctSelector(domain, DOMAIN_SMARTSTORE,DOMAIN_SEARCHSHOPPING,DOMAIN_SHOPPING);
+        
         log.debug("selector.getReviewTopicDivision():" + selector.getReviewTopicDivision());
         sleep(2);
         //리뷰 주제 element를 가져온다.
@@ -364,7 +359,6 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         product.setTitle(product.getTitle());
         product.setRegDate(new Date());
 
-
         try{
 
             if(DOMAIN_SEARCHSHOPPING.equals(domain)){
@@ -375,7 +369,6 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
                         moreTopicButtonElement.click();
                         sleep(1);
                     }
-
                 }
 
                 for(WebElement webElement : reviewTopics ){
@@ -406,7 +399,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         }
     }
 
-    public void getSmartStoreReview(WebDriver webDriver , WebElement topicElement , Product product){
+    public void getSmartStoreReview(WebDriver webDriver , WebElement topicElement , ScrapingProduct product){
         log.debug(topicElement.getText());
 
         String topicName = topicElement.getText().replaceAll("#","");
@@ -494,7 +487,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
      * @param product Product
      * @throws Exception non specific exception
      */
-    public void getSearchStoreReview(WebDriver webDriver , WebElement topicElement , Product product ) throws Exception{
+    public void getSearchStoreReview(WebDriver webDriver , WebElement topicElement , ScrapingProduct product ) throws Exception{
 
         //String topicName = topicElement.findElement(By.cssSelector("a")).getText();
 
@@ -539,7 +532,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         //WebElement sectionReview = section_review
     }
 
-    private void getReviewForPage(WebDriver webDriver, Product product, String pageNum ,String topicName) {
+    private void getReviewForPage(WebDriver webDriver, ScrapingProduct product, String pageNum , String topicName) {
         WebElement reDrawReviewDivision  = webDriver.findElement(By.cssSelector("div[id=section_review]"));
         List<WebElement> reviewLis       = reDrawReviewDivision.findElements(By.cssSelector("ul[class^=reviewItems_list_review] li"));
         WebElement averageElement        = null;
@@ -562,7 +555,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
 
             String average = null;
             repurchaseYn = "N";
-            ProductReview productReview = new ProductReview();
+            ScrapingProductReview productReview = new ScrapingProductReview();
             try{
 
                 if(moreLog) log.debug("[ get review step1 ]");
@@ -616,7 +609,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         }
     }
 
-    private void getReviewForPageWithSmartStore(WebDriver webDriver, Product product, String pageNum, String topicName){
+    private void getReviewForPageWithSmartStore(WebDriver webDriver, ScrapingProduct product, String pageNum, String topicName){
         WebElement reDrawReviewDivision  = webDriver.findElement(By.cssSelector("div[id=REVIEW] > div > div:nth-of-type(3) > div:nth-of-type(2) > ul"));
         List<WebElement> reviewLis       = reDrawReviewDivision.findElements(By.cssSelector("li"));
 
@@ -625,7 +618,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         WebElement contentDiv       = null;
         WebElement reviewCreateDateDiv = null;
 
-        ProductReview productReview = null;
+        ScrapingProductReview productReview = null;
 
         int average = 0;
 
@@ -655,7 +648,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
                     reviewContent = reviewContent.replace("재구매","");
                 }
 
-                productReview = new ProductReview();
+                productReview = new ScrapingProductReview();
                 if(product != null){
                     //TODO product getId를 하지 않아도 되는지 확인해여 product를 set 할지 getId를 할지 결정
                     productReview.setProduct(product);
@@ -714,8 +707,8 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
     }
 
     public void selectProductTest(){
-        List<Product> productList = productRepository.findAllProductByDate("20220820");
-        for(Product product : productList){
+        List<ScrapingProduct> productList = productRepository.findAllProductByDate("20220820");
+        for(ScrapingProduct product : productList){
             log.debug(product.toString());
         }
     }
@@ -727,7 +720,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
      */
     @Transactional
     public void sentimentAnalysisProduct(int productId){
-        List<ProductReview> productReviews = scrapingRepository.findProductReviewAllByProductId(productId);
+        List<ScrapingProductReview> productReviews = scrapingRepository.findProductReviewAllByProductId(productId);
 
         SentimentRequestDto  reqDto = null;
         SentimentResponseDto resDto = null;
@@ -737,7 +730,7 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         double sentimentScoreNeutral  ;
 
 
-        for(ProductReview productReview : productReviews){
+        for(ScrapingProductReview productReview : productReviews){
             if(productReview.getContent().length() < 100){
                 continue;
             }
@@ -764,13 +757,13 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
      */
     @Transactional
     public void textSummaryAnalysisProduct(int productId){
-        List<ProductReview> productReviews = scrapingRepository.findProductReviewAllByProductId(productId);
+        List<ScrapingProductReview> productReviews = scrapingRepository.findProductReviewAllByProductId(productId);
 
         TextSummaryRequestDto  reqDto = null;
         TextSummaryResponseDto resDto = null;
         String tesxtSummaryResult     = null;
 
-        for(ProductReview productReview : productReviews){
+        for(ScrapingProductReview productReview : productReviews){
 
             if(productReview.getContent().length() < 100){
                 continue;

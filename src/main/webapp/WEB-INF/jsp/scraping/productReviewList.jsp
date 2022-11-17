@@ -342,6 +342,8 @@
 	 * @param productId
 	 */
 	function runSentimentAnalysis(productId){
+
+		$('#cover-spin').show(0);
 		$.ajax({
 			url: "${pageContext.request.contextPath}/scraping/sentiment/analysis/product/"+productId, // 클라이언트가 HTTP 요청을 보낼 서버의 URL 주소
 			//data: { keyword: $("#keyword").val() , channel: $("#scrapingChannel").val() },  // HTTP 요청과 함께 서버로 보낼 데이터
@@ -362,6 +364,7 @@
 		})
 		//
 		.always(function(xhr, status) {
+			$('#cover-spin').hide(0);
 			//$("#result_text").html("요청이 완료되었습니다!");
 		});
 	}
@@ -371,6 +374,7 @@
 	 * @param productId
 	 */
 	function runTextSummary(productId){
+		$('#cover-spin').show(0);
 		$.ajax({
 			url: "${pageContext.request.contextPath}/scraping/textSummary/analysis/product/"+productId, // 클라이언트가 HTTP 요청을 보낼 서버의 URL 주소
 			//data: { keyword: $("#keyword").val() , channel: $("#scrapingChannel").val() },  // HTTP 요청과 함께 서버로 보낼 데이터
@@ -393,6 +397,7 @@
 		.always(function(xhr, status) {
 			//$("#result_text").html("요청이 완료되었습니다!");
 		});
+		$('#cover-spin').hide(0);
 	}
 </script>
 <!-- Page level custom scripts -->

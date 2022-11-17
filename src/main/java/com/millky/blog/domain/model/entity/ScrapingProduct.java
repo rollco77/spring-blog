@@ -21,9 +21,9 @@ import java.util.UUID;
  */
 @Data
 @Entity
-@Table(name="T_PRODUCT")
+@Table(name="T_SCRAPING_PRODUCT")
 //@org.hibernate.annotations.Table(comment = "상품", appliesTo = "T_PRODUCT")
-public class Product {
+public class ScrapingProduct {
 
     @Id
     @GeneratedValue
