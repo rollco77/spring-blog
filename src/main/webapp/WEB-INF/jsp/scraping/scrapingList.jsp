@@ -101,8 +101,27 @@
 													,'<c:out value="${result.baseScorePositive}"></c:out>'
 													,'<c:out value="${result.baseScoreNeutral}"></c:out>'
 													)" href="#"><c:out value="${result.keyword}"></c:out></a></td>
-											<td><c:out value="${result.status.description}"></c:out></td>
-											<td><c:out value="${result.noc}"></c:out></td>
+											<td>
+												<c:choose>
+													<c:when test='${result.status.value == "1" || result.status.value == "2" }'>
+														<a href="#" class="btn-sm btn-warning btn-circle">
+															<i class="fas fa-play"></i>
+														</a>
+													</c:when>
+													<c:when test='${result.status.value == "3"  }'>
+														<a href="#" class="btn-sm btn-success">
+															<i class="fas fa-check"></i>
+														</a>
+													</c:when>
+													<c:when test='${result.status.value == "9"  }'>
+														<a href="#" class="btn-sm btn-danger btn-circle">
+															<i class="fas fa-exclamation"></i>
+														</a>
+													</c:when>
+												</c:choose>
+												&nbsp;&nbsp;<c:out value="${result.status.description}"></c:out>
+											</td>
+											<td style="text-align: right"><c:out value="${result.noc}"></c:out></td>
 											<td><button type="button" class="btn-sm btn-success" onclick="go_productList('<c:out value="${result.id}"></c:out>')">
 												상품목록 >>
 											</button></td>
@@ -314,7 +333,9 @@
 		})
 		// HTTP 요청이 성공하면 요청한 데이터가 done() 메소드로 전달됨.
 		.done(function(json) {
-			$("#success_text").html("등록되었습니다.");
+			$("#success_text").html("등록되었습니다. 확인 후 목록화면이 재조회 됩니다.");
+			alert("등록되었습니다. 확인 후 목록화면이 재조회 됩니다.");
+			document.location.reload();
 			//$("<h1>").text(json.title).appendTo("body");
 			//$("<div class=\"content\">").html(json.html).appendTo("body");
 		})
@@ -358,6 +379,8 @@
 		// HTTP 요청이 성공하면 요청한 데이터가 done() 메소드로 전달됨.
 		.done(function(json) {
 			$("#success_text").html("작업 요청이 완료되었습니다.");
+			alert("작업 요청이 완료되었습니다. \n 시스템, 작업량 상황에 따라 30분에서 1시간 또는 그 이상 작업시간이 소요됩니다. ");
+			document.location.reload();
 			//$("<h1>").text(json.title).appendTo("body");
 			//$("<div class=\"content\">").html(json.html).appendTo("body");
 		})

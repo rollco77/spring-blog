@@ -83,7 +83,7 @@ public class ScrapingController {
         HashMap<String,Object> hashMap = new HashMap();
         hashMap.put("scraping", resultScraping);
 
-        webCrawlerService.scraping(resultScraping);
+        webCrawlerService.asyncScraping(resultScraping);
 
         return hashMap;
     }

@@ -30,11 +30,17 @@ public class WebCrawlerController {
     @RequestMapping(value = "/crawler/search/{productName}", method = RequestMethod.GET)
     public String search( @PathVariable String productName) {
 
+        String returnMsg = "OK";
 
-         Scraping scraping = new Scraping();
-         scraping.setKeyword(productName);
-         webCrawlerService.productSearchCrawl(scraping);
-         return "Ok";
+        Scraping scraping = new Scraping();
+        scraping.setKeyword(productName);
+        try {
+            webCrawlerService.productSearchCrawl(scraping);
+        } catch (Exception e) {
+            returnMsg = e.getMessage();
+            throw new RuntimeException(e);
+        }
+        return returnMsg;
     }
 
     @RequestMapping(value = "/crawler/test/{productName}", method = RequestMethod.GET)

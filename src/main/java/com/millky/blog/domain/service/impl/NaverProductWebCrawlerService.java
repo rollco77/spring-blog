@@ -28,6 +28,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -55,10 +56,9 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
     private static final String CHROME_WEB_DRIVER_PROP_NAME   = "webdriver.chrome.driver";
     private static final String NAVER_SHOPPING_START_PAGE_URL = "https://shopping.naver.com/home/p/index.naver";
 
-
     static{
         moreLog        = false;
-        chromeHeadLess = true;
+        chromeHeadLess = false;
     }
 
     @Autowired
@@ -84,9 +84,6 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
 
     @Value("${crawler.naver.domains.shopping}")
     private String DOMAIN_SHOPPING;
-
-
-
 
     public List<Scraping> findScrapingAll(){
         return scrapingRepository.findScrapingAll();
@@ -127,6 +124,11 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
      * @param  scraping 수집정보
      */
 
+    @Async
+    public void asyncScraping(Scraping scraping){
+        this.scraping(scraping);
+    }
+
     @Override
     public void scraping(Scraping scraping){
 
@@ -139,25 +141,31 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
         }
 
         UUID scrapingId = scraping.getId();
-        productSearchCrawl(scraping);
 
-        scraping.setStatus(ScrapingStatus.P2);
-        scraping = scrapingRepository.saveScraping(scraping);
+        try{
+            productSearchCrawl(scraping);
 
-        List<ScrapingProduct> productList = scrapingRepository.findProductAllByScrapingId(scrapingId);
+            scraping.setStatus(ScrapingStatus.P2);
+            scraping = scrapingRepository.saveScraping(scraping);
 
-        for(ScrapingProduct product : productList){
-            productReviewCrawl(product);
-            product.setCollectCommentYn("Y");
-            scrapingRepository.saveProduct(product);
+            List<ScrapingProduct> productList = scrapingRepository.findProductAllByScrapingId(scrapingId);
+
+            for(ScrapingProduct product : productList){
+                productReviewCrawl(product);
+                product.setCollectCommentYn("Y");
+                scrapingRepository.saveProduct(product);
+            }
+            scraping.setStatus(ScrapingStatus.P3);
+
+        }catch(Exception e){
+            e.printStackTrace();
+            scraping.setStatus(ScrapingStatus.E1);
         }
 
-        scraping.setStatus(ScrapingStatus.P3);
         scraping = scrapingRepository.saveScraping(scraping);
-
     }
 
-    public void productSearchCrawl(Scraping scraping) {
+    public void productSearchCrawl(Scraping scraping) throws Exception {
 
         ChromiumDriver webDriver = getChromiumDriver();
 
@@ -187,13 +195,19 @@ public class NaverProductWebCrawlerService implements WebCrawlerService {
 
         } catch (InterruptedException e) {
             e.printStackTrace();
+            throw e;
         }
 
         WebElement itemListDiv  = null;
         try{
             itemListDiv  = webDriver.findElement(By.xpath("/html/body/div/div/div[2]/div[2]/div[3]/div/ul/div"));
         }catch(Exception e){
-            itemListDiv  = webDriver.findElement(By.xpath("/html/body/div/div/div[2]/div/div[3]/div/ul/div"));
+            try{
+                itemListDiv  = webDriver.findElement(By.xpath("/html/body/div/div/div[2]/div/div[3]/div/ul/div"));
+            }catch(Exception e2){
+                throw e2;
+            }
+
         }
 
         List<WebElement> itemListDivs  = itemListDiv.findElements(By.xpath("./div"));

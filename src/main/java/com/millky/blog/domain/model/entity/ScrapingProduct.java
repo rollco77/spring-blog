@@ -68,6 +68,10 @@ public class ScrapingProduct {
     private Date modDate;
 
     //댓글 개수
-    @Formula("(SELECT count(1) FROM t_product_review r WHERE r.product_id = id)")
+    @Formula("(SELECT count(1) FROM t_scraping_product_review r WHERE r.product_id = id)")
     private int reviewCount;
+
+    //상품 개수
+   // @Formula("(SELECT count(1) FROM t_scraping_product r WHERE r.scraping_id = id)")
+   // private int productCount;
 }
