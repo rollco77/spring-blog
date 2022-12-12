@@ -4,6 +4,7 @@ import com.millky.blog.domain.constant.scraping.ScrapingStatus;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -92,4 +93,7 @@ public class Scraping {
     @ColumnDefault("0")
     private Double baseScoreNeutral;
 
+    //상품 개수
+    @Formula("(SELECT count(1) FROM t_scraping_product r WHERE r.scraping_id = id)")
+    private int productCount;
 }

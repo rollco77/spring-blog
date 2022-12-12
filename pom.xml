@@ -254,6 +254,13 @@
             <version>3.1.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.shin285</groupId>
+            <artifactId>KOMORAN</artifactId>
+            <version>3.3.4</version>
+        </dependency>
+
+
         <!--naver api 관련 start -->
     </dependencies>
 
@@ -334,6 +341,12 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+
+
     </repositories>
 
     <pluginRepositories>

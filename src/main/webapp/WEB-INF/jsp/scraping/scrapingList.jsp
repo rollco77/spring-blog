@@ -121,7 +121,7 @@
 												</c:choose>
 												&nbsp;&nbsp;<c:out value="${result.status.description}"></c:out>
 											</td>
-											<td style="text-align: right"><c:out value="${result.noc}"></c:out></td>
+											<td style="text-align: right"><c:out value="${result.productCount}"></c:out></td>
 											<td><button type="button" class="btn-sm btn-success" onclick="go_productList('<c:out value="${result.id}"></c:out>')">
 												상품목록 >>
 											</button></td>
